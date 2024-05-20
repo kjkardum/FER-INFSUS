@@ -1,15 +1,22 @@
+"use client";
 import { PropsWithChildren, useEffect, useMemo, useState } from "react";
 import { User } from "@/contexts/authentication/@types/User";
 import AuthenticationContext from "@/contexts/authentication/AuthenticationContext";
 
 const AuthenticationContextProvider = ({ children }: PropsWithChildren) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | undefined>(undefined);
   const isAuthenticated = useMemo(() => !!user, [user]);
+
+  const redirectToLogin = () => {
+    if (location.pathname !== "/login") location.href = "/login";
+  };
 
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
       setUser(JSON.parse(user));
+    } else {
+      // redirectToLogin(); TODO: temporarily disabled for development
     }
   }, []);
 
@@ -20,7 +27,8 @@ const AuthenticationContextProvider = ({ children }: PropsWithChildren) => {
 
   const logout = () => {
     localStorage.removeItem("user");
-    setUser(null);
+    setUser(undefined);
+    redirectToLogin();
   };
 
   return (

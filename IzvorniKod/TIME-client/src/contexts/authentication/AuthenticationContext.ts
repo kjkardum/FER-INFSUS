@@ -1,15 +1,9 @@
+"use client";
 import { createContext } from "react";
-import { User } from "@/contexts/authentication/@types/User";
-
-interface AuthenticationContextType {
-  user: User | null;
-  isAuthenticated: boolean;
-  login: (user: User) => void;
-  logout: () => void;
-}
+import { AuthenticationContextType } from "@/contexts/authentication/@types/AuthenticationContextType";
 
 const AuthenticationContext = createContext<AuthenticationContextType>({
-  user: null,
+  user: undefined,
   isAuthenticated: false,
   login: () => {},
   logout: () => {},

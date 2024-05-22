@@ -6,6 +6,6 @@ public class AuthenticationService(IHttpContextAccessor httpContextAccessor) : I
 {
     public Guid? GetUserId() =>
         httpContextAccessor.HttpContext?.User.Identity?.IsAuthenticated == true
-            ? Guid.Parse(httpContextAccessor.HttpContext.User.FindFirstValue("sub")!)
+            ? Guid.Parse(httpContextAccessor.HttpContext.User.FindFirstValue("uid")!)
             : null;
 }

@@ -1,10 +1,11 @@
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace FER.InfSus.Time.Application.UseCases.User.Commands.Create;
 
 public record UserRegistrationCommand: IRequest
 {
-    public Guid RequestorId { get; set; }
+    [JsonIgnore] public Guid RequestorId { get; set; }
     public string Email { get; set; } = null!;
 
     public string FirstName { get; set; } = null!;

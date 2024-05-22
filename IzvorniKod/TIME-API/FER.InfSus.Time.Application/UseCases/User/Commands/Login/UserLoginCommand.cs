@@ -10,5 +10,4 @@ public record UserLoginCommand: IRequest<LoggedInUserDto>
     public string NormalizedEmail
         => Email.Trim().ToUpperInvariant();
     public string Password { get; set; } = null!;
-    public bool RememberMe { get; set; }
 }

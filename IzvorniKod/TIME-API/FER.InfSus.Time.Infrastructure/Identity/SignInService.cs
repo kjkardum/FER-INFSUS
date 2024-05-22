@@ -25,7 +25,7 @@ public class SignInService : ISignInService
         {
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim("uid", user.Id.ToString()),
             new Claim("tenant", user.TenantId.ToString()),
             new Claim("role", user.UserType.ToString())
         };

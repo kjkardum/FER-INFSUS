@@ -4,6 +4,9 @@ using FER.InfSus.Time.Api.Extensions;
 using FER.InfSus.Time.Api.Services;
 using FER.InfSus.Time.Application;
 using FER.InfSus.Time.Infrastructure;
+using FER.InfSus.Time.Infrastructure.Persistence;
+using FER.InfSus.Time.Infrastructure.Persistence.Seed;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +15,9 @@ var services = builder.Services;
 ConfigureServices(services, builder.Configuration, builder.Environment);
 
 var app = builder.Build();
+
+// Seed the database
+await FillDatabase(app.Services);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -61,5 +67,16 @@ public partial class Program
         services.AddCustomProblemDetailsResponses(environment);
 
         services.AddScoped<IAuthenticationService, AuthenticationService>();
+    }
+
+    public static async Task FillDatabase(IServiceProvider serviceProvider)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var services = scope.ServiceProvider;
+
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        await context.Database.MigrateAsync();
+
+        await TenantAndUserSeed.Seed(context);
     }
 }

@@ -1,3 +1,4 @@
+using FER.InfSus.Time.Domain.Enums;
 using MediatR;
 using System.Text.Json.Serialization;
 
@@ -11,6 +12,7 @@ public record UserRegistrationCommand: IRequest
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;
+    public UserType UserType { get; set; } = UserType.USER;
 
     public string NormalizedEmail
         => Email.Trim().ToUpperInvariant();

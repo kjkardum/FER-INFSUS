@@ -40,7 +40,7 @@ public class UserRegistrationCommandHandler(
             FirstName = request.FirstName,
             LastName = request.LastName,
             LastLogin = DateTime.UtcNow,
-            UserType = UserType.USER
+            UserType = request.UserType
         };
 
         await userRepository.Create(user);

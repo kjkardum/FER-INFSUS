@@ -31,11 +31,12 @@ public class UserRepository : IUserRepository
         return user;
     }
 
-    public Task<ICollection<User>> GetPaginated(int page, int pageSize, string? orderBy, string? filterBy)
-        => GetPaginated(GetAsQueryable(), page, pageSize, orderBy, filterBy);
+    public Task<ICollection<User>> GetPaginated(Guid tenantId, int page, int pageSize, string? orderBy, string? filterBy)
+        => GetPaginated(GetAsQueryable(), tenantId, page, pageSize, orderBy, filterBy);
 
     public async Task<ICollection<User>> GetPaginated(
         IQueryable<User> query,
+        Guid tenantId,
         int page,
         int pageSize,
         string? orderBy,
@@ -43,9 +44,10 @@ public class UserRepository : IUserRepository
     {
         var filterString = filterBy ?? string.Empty;
 
-        query = query.Where(t => t.Email.Contains(filterString) ||
-            t.FirstName.Contains(filterString) ||
-            t.LastName.Contains(filterString)
+        query = query.Where(t => t.TenantId == tenantId)
+            .Where(t => t.Email.Contains(filterString) ||
+                t.FirstName.Contains(filterString) ||
+                t.LastName.Contains(filterString)
         );
 
         orderBy += ",-,-"; // So I can split safely without checks.

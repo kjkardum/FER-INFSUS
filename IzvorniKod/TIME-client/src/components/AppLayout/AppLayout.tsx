@@ -1,13 +1,34 @@
+"use client";
 import React, { PropsWithChildren } from "react";
 import Header from "@/components/Header/Header";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
+import SideMenu from "@/components/AppLayout/components/SideMenu";
 
 const AppLayout = ({ children }: PropsWithChildren) => {
   return (
-    <main>
+    <Box height={"100vh"}>
       <Header />
-      <Box m={"1rem"}>{children}</Box>
-    </main>
+      <Stack
+        spacing={0}
+        direction={"row"}
+        width={"100%"}
+        height={"calc(100vh - 65px)"}
+        overflow={"hidden"}
+      >
+        <SideMenu />
+        <Box
+          p={"2rem"}
+          sx={{
+            overflowX: "hidden",
+            overflowY: "auto",
+            backgroundColor: "#F9F9F9",
+          }}
+          width={"100%"}
+        >
+          {children}
+        </Box>
+      </Stack>
+    </Box>
   );
 };
 

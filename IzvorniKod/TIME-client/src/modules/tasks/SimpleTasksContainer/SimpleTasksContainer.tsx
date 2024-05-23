@@ -17,7 +17,7 @@ const columns: GridColDef[] = [
 const SimpleTasksContainer = () => {
   return (
     <Box>
-      <Typography variant={"h4"} marginBottom={"1rem"} align={"center"}>
+      <Typography variant={"h5"} marginBottom={"1rem"} align={"center"}>
         My Tasks
       </Typography>
       <Box height={"350px"} width={"100%"}>

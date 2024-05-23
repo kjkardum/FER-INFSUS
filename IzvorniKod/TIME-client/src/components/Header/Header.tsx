@@ -1,35 +1,22 @@
 "use client";
-import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import React, { useState } from "react";
-import useAuthentication from "@/hooks/useAuthentication";
-import UserProfileMenu from "@/components/Header/components/UserProfileMenu";
-import UserDrawer from "@/components/Header/components/UserDrawer";
+import { Box, Toolbar, Typography } from "@mui/material";
+import React from "react";
+import { Timer } from "@mui/icons-material";
 
-const Header = () => {
-  const { isAuthenticated } = useAuthentication();
-  const [drawerOpen, setDrawerOpen] = useState(false);
+interface Props {
+  height?: string;
+}
 
+const Header = ({ height = "65px" }: Props) => {
   return (
-    <AppBar position="static">
+    <Box sx={{ borderBottom: "1px solid #E4E6EA" }} height={height}>
       <Toolbar>
-        <IconButton
-          size="large"
-          edge="start"
-          color="inherit"
-          aria-label="menu"
-          sx={{ mr: 2 }}
-          onClick={() => setDrawerOpen(true)}
-        >
-          <MenuIcon />
-        </IconButton>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <Timer color={"primary"} sx={{ marginLeft: "0.25rem" }} />
+        <Typography variant="h6" sx={{ flexGrow: 1, marginLeft: "0.5rem" }}>
           TIME
         </Typography>
-        {isAuthenticated && <UserProfileMenu />}
       </Toolbar>
-      <UserDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
-    </AppBar>
+    </Box>
   );
 };
 

@@ -1,39 +1,67 @@
 "use client";
-import { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import {
+  PropsWithChildren,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { User } from "@/contexts/authentication/@types/User";
 import AuthenticationContext from "@/contexts/authentication/AuthenticationContext";
+import Cookies from "js-cookie";
+import StatusEndpoint from "@/api/endpoints/StatusEndpoint";
+import { COOKIE_TOKEN } from "@/api/consts";
+import { jwtDecode } from "jwt-decode";
+import { usePathname, useRouter } from "next/navigation";
 
 const AuthenticationContextProvider = ({ children }: PropsWithChildren) => {
+  const pathname = usePathname();
+  const router = useRouter();
+
   const [user, setUser] = useState<User | undefined>(undefined);
   const isAuthenticated = useMemo(() => !!user, [user]);
+  const isAdmin = useMemo(() => user?.role === "ADMIN", [user]);
 
   const redirectToLogin = () => {
-    if (location.pathname !== "/login") location.href = "/login";
+    if (pathname !== "/login") router.push("/login");
+  };
+
+  const redirectToHome = () => {
+    if (pathname === "/login") router.push("/");
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      setUser(JSON.parse(user));
-    } else {
-      // redirectToLogin(); TODO: temporarily disabled for development
-    }
+    StatusEndpoint.authenticatedGet()
+      .then(() => {
+        const token = Cookies.get(COOKIE_TOKEN);
+        if (token) {
+          const decodedToken = jwtDecode(token);
+          setUser(decodedToken as User);
+        }
+
+        redirectToHome();
+      })
+      .catch(() => {
+        redirectToLogin();
+      });
   }, []);
 
-  const login = (user: User) => {
-    localStorage.setItem("user", JSON.stringify(user));
+  const login = useCallback((jwt_token: string) => {
+    Cookies.set(COOKIE_TOKEN, jwt_token, { expires: 7, secure: true });
+    const user = jwtDecode(jwt_token) as User;
     setUser(user);
-  };
+    redirectToHome();
+  }, []);
 
-  const logout = () => {
-    localStorage.removeItem("user");
+  const logout = useCallback(() => {
+    Cookies.remove(COOKIE_TOKEN);
     setUser(undefined);
     redirectToLogin();
-  };
+  }, []);
 
   return (
     <AuthenticationContext.Provider
-      value={{ user, login, logout, isAuthenticated }}
+      value={{ user, login, logout, isAuthenticated, isAdmin }}
     >
       {children}
     </AuthenticationContext.Provider>

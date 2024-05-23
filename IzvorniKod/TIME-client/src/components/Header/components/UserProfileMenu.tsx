@@ -5,7 +5,7 @@ import { AccountCircle } from "@mui/icons-material";
 import useAuthentication from "@/hooks/useAuthentication";
 
 const UserProfileMenu = () => {
-  const { user } = useAuthentication();
+  const { logout } = useAuthentication();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -19,7 +19,10 @@ const UserProfileMenu = () => {
 
   const handleProfile = () => {};
 
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    logout();
+    handleClose();
+  };
 
   return (
     <div>
@@ -48,7 +51,6 @@ const UserProfileMenu = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        {user?.username}
         <MenuItem onClick={handleProfile}>Profile</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>

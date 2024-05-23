@@ -5,6 +5,7 @@ import { AuthenticationContextType } from "@/contexts/authentication/@types/Auth
 const AuthenticationContext = createContext<AuthenticationContextType>({
   user: undefined,
   isAuthenticated: false,
+  isAdmin: false,
   login: () => {},
   logout: () => {},
 });

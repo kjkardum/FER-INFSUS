@@ -3,7 +3,7 @@ import { Box, Button, Typography } from "@mui/material";
 const SimpleBoardsContainer = () => {
   return (
     <Box>
-      <Typography variant={"h4"} marginBottom={"1rem"} align={"center"}>
+      <Typography variant={"h5"} marginBottom={"1rem"} align={"center"}>
         My Boards
       </Typography>
       <Box

@@ -6,21 +6,28 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "gen-api": "openapi-generator-cli generate -i src/api/apispec.json -g typescript-axios -o src/api/generated"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.18",
+    "@mui/lab": "^5.0.0-alpha.170",
     "@mui/material": "^5.15.18",
     "@mui/x-data-grid": "^7.5.0",
     "@mui/x-date-pickers": "^7.5.0",
+    "axios": "^1.7.2",
     "dayjs": "^1.11.11",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.13.4",
+    "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

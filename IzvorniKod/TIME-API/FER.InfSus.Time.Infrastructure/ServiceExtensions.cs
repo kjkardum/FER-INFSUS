@@ -21,6 +21,7 @@ public static class ServiceExtensions
 
         services.AddTransient<ISignInService, SignInService>();
         services.AddTransient<IUserRepository, UserRepository>();
+        services.AddTransient<ITaskboardRepository, TaskboardRepository>();
         return services;
     }
 }

@@ -1,17 +1,16 @@
+using FER.InfSus.Time.Application.UseCases.User.Dto;
 using FER.InfSus.Time.Domain.Enums;
 
-namespace FER.InfSus.Time.Domain.Entities;
+namespace FER.InfSus.Time.Application.UseCases.TaskItem.Dtos;
 
-public class TaskItem
+public class TaskItemSimpleDto
 {
     public Guid Id { get; set; }
     public required string Name { get; set; }
     public required string Description { get; set; }
     public TaskItemState State { get; set; }
     public Guid TaskboardId { get; set; }
-    public Taskboard? Taskboard { get; set; }
     public Guid? AssignedUserId { get; set; }
-    public User? AssignedUser { get; set; }
+    public UserDto? AssignedUser { get; set; }
     public DateTime CreatedAt { get; set; }
-    public ICollection<TaskItemHistoryLog>? HistoryLogs { get; set; }
 }

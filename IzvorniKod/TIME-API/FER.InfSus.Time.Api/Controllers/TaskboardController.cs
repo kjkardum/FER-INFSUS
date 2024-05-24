@@ -4,11 +4,13 @@ using FER.InfSus.Time.Application.UseCases.Taskboard.Commands.Create;
 using FER.InfSus.Time.Application.UseCases.Taskboard.Commands.Delete;
 using FER.InfSus.Time.Application.UseCases.Taskboard.Commands.RemoveUser;
 using FER.InfSus.Time.Application.UseCases.Taskboard.Commands.Update;
+using FER.InfSus.Time.Application.UseCases.Taskboard.Dtos;
 using FER.InfSus.Time.Application.UseCases.Taskboard.Queries.GetAllByTenant;
 using FER.InfSus.Time.Application.UseCases.Taskboard.Queries.GetAllByUserId;
 using FER.InfSus.Time.Application.UseCases.Taskboard.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.Mime;
 
@@ -28,7 +30,7 @@ public class TaskboardController(
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> GetTaskboard(
+    public async Task<ActionResult<TaskboardDetailedDto>> GetTaskboard(
         Guid id,
         CancellationToken cancellationToken = default)
     {
@@ -48,7 +50,7 @@ public class TaskboardController(
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult> GetAssignedTaskboards(
+    public async Task<ActionResult<ICollection<TaskboardSimpleDto>>> GetAssignedTaskboards(
         CancellationToken cancellationToken = default)
     {
         var taskboards = await mediator.Send(
@@ -67,7 +69,7 @@ public class TaskboardController(
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult> GetAllTaskboards(
+    public async Task<ActionResult<ICollection<TaskboardSimpleDto>>> GetAllTaskboards(
         CancellationToken cancellationToken = default)
     {
         var taskboards = await mediator.Send(
@@ -87,7 +89,7 @@ public class TaskboardController(
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status403Forbidden)]
-    public async Task<ActionResult> CreateTaskboard(
+    public async Task<ActionResult<TaskboardSimpleDto>> CreateTaskboard(
         TaskboardCreateCommand request,
         CancellationToken cancellationToken = default)
     {

@@ -102,6 +102,176 @@ export interface ProblemDetails {
 /**
  * 
  * @export
+ * @interface TaskboardAddUserCommand
+ */
+export interface TaskboardAddUserCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardAddUserCommand
+     */
+    'taskboardId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardAddUserCommand
+     */
+    'userId'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface TaskboardCreateCommand
+ */
+export interface TaskboardCreateCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardCreateCommand
+     */
+    'name': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardCreateCommand
+     */
+    'description': string | null;
+}
+/**
+ * 
+ * @export
+ * @interface TaskboardRemoveUserCommand
+ */
+export interface TaskboardRemoveUserCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardRemoveUserCommand
+     */
+    'taskboardId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardRemoveUserCommand
+     */
+    'userId'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface TaskboardUpdateCommand
+ */
+export interface TaskboardUpdateCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardUpdateCommand
+     */
+    'name': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardUpdateCommand
+     */
+    'description': string | null;
+}
+/**
+ * 
+ * @export
+ * @interface UserDto
+ */
+export interface UserDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    'id'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    'tenantId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    'email'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    'lastLogin'?: string;
+    /**
+     * 
+     * @type {UserType}
+     * @memberof UserDto
+     */
+    'userType'?: UserType;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    'firstName'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    'lastName'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    'dateOfBirth'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserDto
+     */
+    'createdAt'?: string;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface UserDtoPaginatedResponse
+ */
+export interface UserDtoPaginatedResponse {
+    /**
+     * 
+     * @type {number}
+     * @memberof UserDtoPaginatedResponse
+     */
+    'pageNumber'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UserDtoPaginatedResponse
+     */
+    'pageSize'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof UserDtoPaginatedResponse
+     */
+    'totalRecords'?: number;
+    /**
+     * 
+     * @type {Array<UserDto>}
+     * @memberof UserDtoPaginatedResponse
+     */
+    'data'?: Array<UserDto> | null;
+}
+/**
+ * 
+ * @export
  * @interface UserLoginCommand
  */
 export interface UserLoginCommand {
@@ -123,12 +293,6 @@ export interface UserLoginCommand {
      * @memberof UserLoginCommand
      */
     'password'?: string | null;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof UserLoginCommand
-     */
-    'rememberMe'?: boolean;
 }
 /**
  * 
@@ -136,12 +300,6 @@ export interface UserLoginCommand {
  * @interface UserRegistrationCommand
  */
 export interface UserRegistrationCommand {
-    /**
-     * 
-     * @type {string}
-     * @memberof UserRegistrationCommand
-     */
-    'requestorId'?: string;
     /**
      * 
      * @type {string}
@@ -162,6 +320,12 @@ export interface UserRegistrationCommand {
     'lastName'?: string | null;
     /**
      * 
+     * @type {UserType}
+     * @memberof UserRegistrationCommand
+     */
+    'userType'?: UserType;
+    /**
+     * 
      * @type {string}
      * @memberof UserRegistrationCommand
      */
@@ -173,6 +337,22 @@ export interface UserRegistrationCommand {
      */
     'password'?: string | null;
 }
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const UserType = {
+    NUMBER_0: 0,
+    NUMBER_1: 1
+} as const;
+
+export type UserType = typeof UserType[keyof typeof UserType];
+
+
 
 /**
  * AuthenticationApi - axios parameter creator
@@ -443,6 +623,582 @@ export class StatusApi extends BaseAPI {
 
 
 /**
+ * TaskboardApi - axios parameter creator
+ * @export
+ */
+export const TaskboardApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardAllGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/Taskboard/all`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {TaskboardAddUserCommand} [taskboardAddUserCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardAssignPost: async (taskboardAddUserCommand?: TaskboardAddUserCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/Taskboard/assign`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskboardAddUserCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardAssignedGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/Taskboard/assigned`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardIdDelete: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskboardIdDelete', 'id', id)
+            const localVarPath = `/api/Taskboard/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardIdGet: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskboardIdGet', 'id', id)
+            const localVarPath = `/api/Taskboard/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskboardUpdateCommand} [taskboardUpdateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardIdPut: async (id: string, taskboardUpdateCommand?: TaskboardUpdateCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskboardIdPut', 'id', id)
+            const localVarPath = `/api/Taskboard/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskboardUpdateCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {TaskboardCreateCommand} [taskboardCreateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardPost: async (taskboardCreateCommand?: TaskboardCreateCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/Taskboard`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskboardCreateCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {TaskboardRemoveUserCommand} [taskboardRemoveUserCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardUnassignPost: async (taskboardRemoveUserCommand?: TaskboardRemoveUserCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/Taskboard/unassign`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskboardRemoveUserCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * TaskboardApi - functional programming interface
+ * @export
+ */
+export const TaskboardApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = TaskboardApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskboardAllGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardAllGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardAllGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {TaskboardAddUserCommand} [taskboardAddUserCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskboardAssignPost(taskboardAddUserCommand?: TaskboardAddUserCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardAssignPost(taskboardAddUserCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardAssignPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskboardAssignedGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardAssignedGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardAssignedGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskboardIdDelete(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardIdDelete(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardIdDelete']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskboardIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardIdGet(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardIdGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskboardUpdateCommand} [taskboardUpdateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskboardIdPut(id: string, taskboardUpdateCommand?: TaskboardUpdateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardIdPut(id, taskboardUpdateCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardIdPut']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {TaskboardCreateCommand} [taskboardCreateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskboardPost(taskboardCreateCommand?: TaskboardCreateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardPost(taskboardCreateCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {TaskboardRemoveUserCommand} [taskboardRemoveUserCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskboardUnassignPost(taskboardRemoveUserCommand?: TaskboardRemoveUserCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardUnassignPost(taskboardRemoveUserCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardUnassignPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * TaskboardApi - factory interface
+ * @export
+ */
+export const TaskboardApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = TaskboardApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardAllGet(options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskboardAllGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {TaskboardAddUserCommand} [taskboardAddUserCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardAssignPost(taskboardAddUserCommand?: TaskboardAddUserCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskboardAssignPost(taskboardAddUserCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardAssignedGet(options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskboardAssignedGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardIdDelete(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskboardIdDelete(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardIdGet(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskboardIdGet(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskboardUpdateCommand} [taskboardUpdateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardIdPut(id: string, taskboardUpdateCommand?: TaskboardUpdateCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskboardIdPut(id, taskboardUpdateCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {TaskboardCreateCommand} [taskboardCreateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardPost(taskboardCreateCommand?: TaskboardCreateCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskboardPost(taskboardCreateCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {TaskboardRemoveUserCommand} [taskboardRemoveUserCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskboardUnassignPost(taskboardRemoveUserCommand?: TaskboardRemoveUserCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskboardUnassignPost(taskboardRemoveUserCommand, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * TaskboardApi - object-oriented interface
+ * @export
+ * @class TaskboardApi
+ * @extends {BaseAPI}
+ */
+export class TaskboardApi extends BaseAPI {
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskboardApi
+     */
+    public apiTaskboardAllGet(options?: RawAxiosRequestConfig) {
+        return TaskboardApiFp(this.configuration).apiTaskboardAllGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {TaskboardAddUserCommand} [taskboardAddUserCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskboardApi
+     */
+    public apiTaskboardAssignPost(taskboardAddUserCommand?: TaskboardAddUserCommand, options?: RawAxiosRequestConfig) {
+        return TaskboardApiFp(this.configuration).apiTaskboardAssignPost(taskboardAddUserCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskboardApi
+     */
+    public apiTaskboardAssignedGet(options?: RawAxiosRequestConfig) {
+        return TaskboardApiFp(this.configuration).apiTaskboardAssignedGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskboardApi
+     */
+    public apiTaskboardIdDelete(id: string, options?: RawAxiosRequestConfig) {
+        return TaskboardApiFp(this.configuration).apiTaskboardIdDelete(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskboardApi
+     */
+    public apiTaskboardIdGet(id: string, options?: RawAxiosRequestConfig) {
+        return TaskboardApiFp(this.configuration).apiTaskboardIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {TaskboardUpdateCommand} [taskboardUpdateCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskboardApi
+     */
+    public apiTaskboardIdPut(id: string, taskboardUpdateCommand?: TaskboardUpdateCommand, options?: RawAxiosRequestConfig) {
+        return TaskboardApiFp(this.configuration).apiTaskboardIdPut(id, taskboardUpdateCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {TaskboardCreateCommand} [taskboardCreateCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskboardApi
+     */
+    public apiTaskboardPost(taskboardCreateCommand?: TaskboardCreateCommand, options?: RawAxiosRequestConfig) {
+        return TaskboardApiFp(this.configuration).apiTaskboardPost(taskboardCreateCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {TaskboardRemoveUserCommand} [taskboardRemoveUserCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskboardApi
+     */
+    public apiTaskboardUnassignPost(taskboardRemoveUserCommand?: TaskboardRemoveUserCommand, options?: RawAxiosRequestConfig) {
+        return TaskboardApiFp(this.configuration).apiTaskboardUnassignPost(taskboardRemoveUserCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * TenantManagementApi - axios parameter creator
  * @export
  */
@@ -484,6 +1240,58 @@ export const TenantManagementApiAxiosParamCreator = function (configuration?: Co
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [filterBy] 
+         * @param {string} [orderBy] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTenantManagementGetUsersGet: async (page?: number, pageSize?: number, filterBy?: string, orderBy?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/TenantManagement/getUsers`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (page !== undefined) {
+                localVarQueryParameter['Page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['PageSize'] = pageSize;
+            }
+
+            if (filterBy !== undefined) {
+                localVarQueryParameter['FilterBy'] = filterBy;
+            }
+
+            if (orderBy !== undefined) {
+                localVarQueryParameter['OrderBy'] = orderBy;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -506,6 +1314,21 @@ export const TenantManagementApiFp = function(configuration?: Configuration) {
             const localVarOperationServerBasePath = operationServerMap['TenantManagementApi.apiTenantManagementCreateUserPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
+        /**
+         * 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [filterBy] 
+         * @param {string} [orderBy] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTenantManagementGetUsersGet(page?: number, pageSize?: number, filterBy?: string, orderBy?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UserDtoPaginatedResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTenantManagementGetUsersGet(page, pageSize, filterBy, orderBy, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TenantManagementApi.apiTenantManagementGetUsersGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
     }
 };
 
@@ -524,6 +1347,18 @@ export const TenantManagementApiFactory = function (configuration?: Configuratio
          */
         apiTenantManagementCreateUserPost(userRegistrationCommand?: UserRegistrationCommand, options?: any): AxiosPromise<void> {
             return localVarFp.apiTenantManagementCreateUserPost(userRegistrationCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
+         * @param {string} [filterBy] 
+         * @param {string} [orderBy] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTenantManagementGetUsersGet(page?: number, pageSize?: number, filterBy?: string, orderBy?: string, options?: any): AxiosPromise<UserDtoPaginatedResponse> {
+            return localVarFp.apiTenantManagementGetUsersGet(page, pageSize, filterBy, orderBy, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -544,6 +1379,20 @@ export class TenantManagementApi extends BaseAPI {
      */
     public apiTenantManagementCreateUserPost(userRegistrationCommand?: UserRegistrationCommand, options?: RawAxiosRequestConfig) {
         return TenantManagementApiFp(this.configuration).apiTenantManagementCreateUserPost(userRegistrationCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
+     * @param {string} [filterBy] 
+     * @param {string} [orderBy] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TenantManagementApi
+     */
+    public apiTenantManagementGetUsersGet(page?: number, pageSize?: number, filterBy?: string, orderBy?: string, options?: RawAxiosRequestConfig) {
+        return TenantManagementApiFp(this.configuration).apiTenantManagementGetUsersGet(page, pageSize, filterBy, orderBy, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

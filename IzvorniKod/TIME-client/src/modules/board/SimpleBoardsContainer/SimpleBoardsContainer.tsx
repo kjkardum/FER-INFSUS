@@ -1,30 +1,54 @@
-import { Box, Button, Typography } from "@mui/material";
+"use client";
+import { Box, Button, Divider, Typography } from "@mui/material";
+import useTaskboardGetAllBoards from "@/api/hooks/TaskboardEndpoint/useTaskboardGetBoards";
+import React from "react";
+import WholeSectionLoading from "@/components/WholeSectionLoading/WholeSectionLoading";
+import Link from "next/link";
 
 const SimpleBoardsContainer = () => {
+  const { data, isLoading, isSuccess } = useTaskboardGetAllBoards();
+
   return (
-    <Box>
+    <Box height={"100%"}>
       <Typography variant={"h5"} marginBottom={"1rem"} align={"center"}>
         My Boards
       </Typography>
-      <Box
-        display={"grid"}
-        gridTemplateColumns={"1fr 1fr"}
-        rowGap={"1rem"}
-        columnGap={"1rem"}
-      >
-        <Button variant={"outlined"} color={"inherit"}>
-          Board 1
-        </Button>
-        <Button variant={"outlined"} color={"inherit"}>
-          Board 2
-        </Button>
-        <Button variant={"outlined"} color={"inherit"}>
-          Board 3
-        </Button>
-        <Button variant={"outlined"} color={"inherit"}>
-          Board 4
-        </Button>
-      </Box>
+      {isLoading && <WholeSectionLoading />}
+      {isSuccess && data && data.length === 0 && (
+        <Typography align={"center"}>No boards found.</Typography>
+      )}
+      {isSuccess && data && data.length > 0 && (
+        <>
+          <Divider sx={{ my: 2 }} />
+          <Box
+            display={"grid"}
+            gridTemplateColumns={"1fr 1fr"}
+            rowGap={"1rem"}
+            columnGap={"1rem"}
+          >
+            {data?.slice(0, 10).map((board) => (
+              <Link
+                href={`/board/${board.id}`}
+                key={board.id}
+                style={{
+                  textDecoration: "none",
+                  color: "inherit",
+                  width: "100%",
+                }}
+              >
+                <Button
+                  variant={"outlined"}
+                  color={"inherit"}
+                  key={board.id}
+                  fullWidth
+                >
+                  {board.name}
+                </Button>
+              </Link>
+            ))}
+          </Box>
+        </>
+      )}
     </Box>
   );
 };

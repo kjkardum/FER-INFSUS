@@ -1,5 +1,7 @@
-import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
+"use client";
 import React from "react";
+import { Box, Grid, Paper, Stack, Typography } from "@mui/material";
+import EmployeesContainer from "@/modules/organization/OrganizationContainer/components/EmployeesContainer";
 
 const OrganizationContainer = () => {
   return (
@@ -20,10 +22,17 @@ const OrganizationContainer = () => {
           </Stack>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper elevation={1} sx={{ height: 815, padding: "1rem" }}>
-            <Typography variant="h5" gutterBottom>
-              Employees
-            </Typography>
+          <Paper
+            elevation={1}
+            sx={{
+              height: 815,
+              padding: "1rem",
+              overflow: "hidden",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <EmployeesContainer />
           </Paper>
         </Grid>
       </Grid>

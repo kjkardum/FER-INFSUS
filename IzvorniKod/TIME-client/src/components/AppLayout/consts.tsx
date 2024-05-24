@@ -38,5 +38,6 @@ export const SIDE_MENU_TABS: Array<SideMenuTabType> = [
     icon: <CorporateFare />,
     path: "/organization",
     color: "warning",
+    role: "ADMIN",
   },
 ];

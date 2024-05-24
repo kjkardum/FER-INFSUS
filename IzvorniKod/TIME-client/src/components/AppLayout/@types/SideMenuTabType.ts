@@ -1,4 +1,5 @@
 import { ReactNode } from "react";
+import { UserRole } from "@/contexts/authentication/@types/User";
 
 export interface SideMenuTabType {
   title: string;
@@ -12,4 +13,5 @@ export interface SideMenuTabType {
     | "info"
     | "success"
     | "warning";
+  role?: UserRole;
 }

@@ -21,6 +21,9 @@ export default function Login() {
       .then((user) => {
         if (user.data.token) login(user.data.token);
       })
+      .catch((error) => {
+        // TODO: add snackbar
+      })
       .finally(() => setIsLoading(false));
   };
 
@@ -57,6 +60,7 @@ export default function Login() {
           <TextField
             label={"Email:"}
             name={"email"}
+            type={"email"}
             color={"secondary"}
             autoFocus
             value={email}

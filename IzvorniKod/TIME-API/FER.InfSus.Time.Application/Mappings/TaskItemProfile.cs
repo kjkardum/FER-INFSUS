@@ -9,5 +9,7 @@ public class TaskItemProfile : Profile
     public TaskItemProfile()
     {
         CreateMap<TaskItem, TaskItemSimpleDto>();
+        CreateMap<TaskItem, TaskItemDetailedDto>();
+        CreateMap<TaskItemHistoryLog, TaskItemHistoryLogDto>();
     }
 }

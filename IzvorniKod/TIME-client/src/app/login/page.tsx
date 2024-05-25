@@ -5,6 +5,7 @@ import useAuthentication from "@/hooks/useAuthentication";
 import AuthEndpoint from "@/api/endpoints/AuthEndpoint";
 import { LoadingButton } from "@mui/lab";
 import { WavingHand } from "@mui/icons-material";
+import useSnackbar from "@/hooks/useSnackbar";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -13,6 +14,7 @@ export default function Login() {
 
   const theme = useTheme();
   const { login } = useAuthentication();
+  const { showSnackbar } = useSnackbar();
 
   const handleLogin: FormEventHandler<HTMLFormElement> = (event) => {
     event.preventDefault();
@@ -22,7 +24,7 @@ export default function Login() {
         if (user.data.token) login(user.data.token);
       })
       .catch((error) => {
-        // TODO: add snackbar
+        showSnackbar("Invalid email or password", "error");
       })
       .finally(() => setIsLoading(false));
   };

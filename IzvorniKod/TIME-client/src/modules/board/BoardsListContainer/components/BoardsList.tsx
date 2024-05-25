@@ -1,17 +1,18 @@
 "use client";
-import { Alert, Grid, Menu, MenuItem, Snackbar } from "@mui/material";
+import { Grid, Menu, MenuItem } from "@mui/material";
 import React, { useState } from "react";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
 import BoardListItem from "@/modules/board/BoardsListContainer/components/BoardListItem";
 import TaskboardEndpoint from "@/api/endpoints/TaskboardEndpoint";
-import { Board } from "@/modules/board/BoardsListContainer/@types/Board";
 import { useQueryClient } from "@tanstack/react-query";
 import { taskboardGetAllBoardsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
 import BoardManagementModal from "@/modules/board/BoardsListContainer/components/BoardManagementModal";
 import useAuthentication from "@/hooks/useAuthentication";
+import { TaskboardSimpleDto } from "@/api/generated";
+import useSnackbar from "@/hooks/useSnackbar";
 
 interface BoardsListProps {
-  boards: Array<Board>;
+  boards: Array<TaskboardSimpleDto>;
 }
 
 const BoardsList = ({ boards }: BoardsListProps) => {
@@ -22,22 +23,16 @@ const BoardsList = ({ boards }: BoardsListProps) => {
     useState<boolean>(false);
   const [openEditBoardPrompt, setOpenEditBoardPrompt] =
     useState<boolean>(false);
-  const [selectedBoard, setSelectedBoard] = useState<Board | undefined>(
-    undefined,
-  );
-  const [snackBarMessage, setSnackBarMessage] = useState<
-    | {
-        message: string;
-        color: "success" | "error" | "info" | "warning";
-      }
-    | undefined
+  const [selectedBoard, setSelectedBoard] = useState<
+    TaskboardSimpleDto | undefined
   >(undefined);
 
   const queryClient = useQueryClient();
+  const { showSnackbar } = useSnackbar();
 
   const menuOpen = (
     event: React.MouseEvent<HTMLButtonElement>,
-    board: Board,
+    board: TaskboardSimpleDto,
   ) => {
     event.preventDefault();
     event.stopPropagation();
@@ -69,17 +64,11 @@ const BoardsList = ({ boards }: BoardsListProps) => {
     if (selectedBoard?.id)
       TaskboardEndpoint.apiTaskboardIdDelete(selectedBoard?.id)
         .then(() => {
-          setSnackBarMessage({
-            message: "Board deleted successfully.",
-            color: "success",
-          });
+          showSnackbar("Board deleted successfully.", "success");
           queryClient.invalidateQueries({ queryKey: taskboardGetAllBoardsKey });
         })
         .catch(() => {
-          setSnackBarMessage({
-            message: "Failed to delete board.",
-            color: "error",
-          });
+          showSnackbar("Failed to delete board.", "error");
         })
         .finally(() => {
           setOpenDeleteBoardPrompt(false);
@@ -109,20 +98,6 @@ const BoardsList = ({ boards }: BoardsListProps) => {
         <MenuItem onClick={onOpenEditBoardPrompt}>Edit</MenuItem>
         <MenuItem onClick={onOpenDeleteBoardPrompt}>Delete</MenuItem>
       </Menu>
-      <Snackbar
-        open={!!snackBarMessage}
-        autoHideDuration={6000}
-        onClose={() => setSnackBarMessage(undefined)}
-      >
-        <Alert
-          onClose={() => setSnackBarMessage(undefined)}
-          severity={snackBarMessage?.color}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackBarMessage?.message}
-        </Alert>
-      </Snackbar>
 
       <DeletePrompt
         open={openDeleteBoardPrompt}

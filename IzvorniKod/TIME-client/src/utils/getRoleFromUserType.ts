@@ -2,7 +2,7 @@ const getRoleFromUserType = (role: number) => {
   if (role === 1) {
     return "Admin";
   }
-  if (role === 2) {
+  if (role === 0) {
     return "User";
   }
 

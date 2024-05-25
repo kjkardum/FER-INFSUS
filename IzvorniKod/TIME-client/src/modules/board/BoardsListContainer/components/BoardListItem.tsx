@@ -9,16 +9,17 @@ import {
 import { Menu as MenuIcon } from "@mui/icons-material";
 import Link from "next/link";
 import React, { MouseEventHandler } from "react";
-import { Board } from "@/modules/board/BoardsListContainer/@types/Board";
+import { TaskboardSimpleDto } from "@/api/generated";
 
 const CardWithHover = styled(Card)(({ theme }) => ({
   "&:hover": {
     boxShadow: theme.shadows[2],
+    cursor: "pointer",
   },
 }));
 
 interface Props {
-  board: Board;
+  board: TaskboardSimpleDto;
   isAdmin?: boolean;
   menuOpen: MouseEventHandler<HTMLButtonElement>;
 }

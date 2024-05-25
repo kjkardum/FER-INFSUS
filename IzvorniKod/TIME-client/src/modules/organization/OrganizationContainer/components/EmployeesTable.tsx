@@ -10,7 +10,12 @@ import UserManagementModal from "@/modules/organization/OrganizationContainer/co
 const columns: GridColDef<UserDto>[] = [
   { field: "firstName", headerName: "First Name", width: 150 },
   { field: "lastName", headerName: "Last Name", width: 150 },
-  { field: "email", headerName: "Email", width: 150 },
+  {
+    field: "email",
+    headerName: "Email",
+    width: 150,
+    valueGetter: (_, row) => row.email?.toLowerCase(),
+  },
   {
     field: "userType",
     headerName: "Role",

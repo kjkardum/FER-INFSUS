@@ -8,6 +8,7 @@ import WholeSectionLoading from "@/components/WholeSectionLoading/WholeSectionLo
 import { AddCircle } from "@mui/icons-material";
 import BoardManagementModal from "@/modules/board/BoardsListContainer/components/BoardManagementModal";
 import useAuthentication from "@/hooks/useAuthentication";
+import useTaskboardGetAssignedBoards from "@/api/hooks/TaskboardEndpoint/useTaskboardGetAssignedBoards";
 
 const BoardsListContainer = () => {
   const { isAdmin } = useAuthentication();
@@ -15,14 +16,23 @@ const BoardsListContainer = () => {
   const [createBoardModalOpen, setCreateBoardModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const { data, isLoading, isSuccess } = useTaskboardGetAllBoards();
+  const { data: allBoards, isLoading, isSuccess } = useTaskboardGetAllBoards();
+  const {
+    data: myBoards,
+    isLoading: isLoadingMyBoards,
+    isSuccess: isSuccessMyBoards,
+  } = useTaskboardGetAssignedBoards(isAdmin);
+
+  // TODO: check potential caching issues
 
   const filteredData = useMemo(
     () =>
-      data?.filter((board) =>
-        board.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      (allBoards || myBoards)?.filter(
+        (board) =>
+          board?.name &&
+          board?.name.toLowerCase().includes(searchQuery.toLowerCase()),
       ),
-    [data, searchQuery],
+    [allBoards, searchQuery, myBoards],
   );
 
   return (
@@ -43,26 +53,31 @@ const BoardsListContainer = () => {
         onChange={(value) => setSearchQuery(value)}
       />
       <Divider sx={{ my: 2 }} />
-      {isLoading && <WholeSectionLoading />}
-      {isSuccess && !searchQuery && data && data.length === 0 && (
-        <Typography>
-          No boards found. Click on the + icon to create a new board.
-        </Typography>
-      )}
-      {isSuccess &&
+      {isLoadingMyBoards && isLoading && <WholeSectionLoading />}
+      {(isSuccess || isSuccessMyBoards) &&
+        !searchQuery &&
+        filteredData &&
+        filteredData.length === 0 && (
+          <Typography>
+            No boards found.{" "}
+            {isAdmin && "Click on the + icon to create a new board."}
+          </Typography>
+        )}
+      {(isSuccess || isSuccessMyBoards) &&
         searchQuery &&
         filteredData &&
         filteredData.length === 0 && (
           <Typography>No boards found for query</Typography>
         )}
-      {isSuccess && filteredData && filteredData.length > 0 && (
-        <BoardsList boards={filteredData} />
+      {(isSuccess || isSuccessMyBoards) &&
+        filteredData &&
+        filteredData.length > 0 && <BoardsList boards={filteredData} />}
+      {isAdmin && (
+        <BoardManagementModal
+          open={createBoardModalOpen}
+          handleClose={() => setCreateBoardModalOpen(false)}
+        />
       )}
-
-      <BoardManagementModal
-        open={createBoardModalOpen}
-        handleClose={() => setCreateBoardModalOpen(false)}
-      />
     </Box>
   );
 };

@@ -6,17 +6,24 @@ import { AccountCircle } from "@mui/icons-material";
 import useAuthentication from "@/hooks/useAuthentication";
 import { SIDE_MENU_TABS } from "@/components/AppLayout/consts";
 import { usePathname } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 const sliceEmail = (email?: string) => {
   if (!email) return "";
-  const slicedEmail = email.slice(0, 12);
-  if (email.length > 12) return `${slicedEmail}...`;
+  const slicedEmail = email.slice(0, 15);
+  if (email.length > 15) return `${slicedEmail}...`;
   return slicedEmail;
 };
 
 const SideMenu = () => {
   const { user, logout, isAdmin } = useAuthentication();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
+
+  const handleLogout = () => {
+    queryClient.clear();
+    logout();
+  };
 
   return (
     <Stack
@@ -70,16 +77,16 @@ const SideMenu = () => {
               overflow={"hidden"}
               textOverflow={"ellipsis"}
               component={"span"}
-              title={user?.email}
+              title={user?.email.toLowerCase()}
             >
-              {sliceEmail(user?.email)}
+              {sliceEmail(user?.email).toLowerCase()}
             </Typography>
           </Stack>
         </Button>
         <Button
           variant={"outlined"}
           color={"error"}
-          onClick={logout}
+          onClick={handleLogout}
           sx={{ width: 150 }}
         >
           Logout

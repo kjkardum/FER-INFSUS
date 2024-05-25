@@ -1,7 +1,5 @@
 "use client";
 import {
-  Alert,
-  AlertColor,
   Button,
   Dialog,
   DialogActions,
@@ -12,7 +10,6 @@ import {
   FormLabel,
   Radio,
   RadioGroup,
-  Snackbar,
   Stack,
   TextField,
 } from "@mui/material";
@@ -32,6 +29,7 @@ import { LoadingButton } from "@mui/lab";
 import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
 import { useQueryClient } from "@tanstack/react-query";
 import { tenantGetUsersKey } from "@/api/reactQueryKeys/TenantEndpointKeys";
+import useSnackbar from "@/hooks/useSnackbar";
 
 interface Props {
   user?: UserDto;
@@ -41,6 +39,7 @@ interface Props {
 
 const UserManagementModal = ({ open, user, handleClose }: Props) => {
   const queryClient = useQueryClient();
+  const { showSnackbar } = useSnackbar();
 
   const [firstName, setFirstName] = useState<string>(user?.firstName ?? "");
   const [lastName, setLastName] = useState<string>(user?.lastName ?? "");
@@ -52,9 +51,6 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
   const [userRole, setUserRole] = useState<string | undefined>(
     user ? getRoleFromUserType(user.userType ?? 0).toLowerCase() : "user",
   );
-  const [snackBarMessage, setSnackBarMessage] = useState<
-    { message: string; color: AlertColor } | undefined
-  >(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -85,10 +81,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
   const handleSave = () => {
     if (!user) {
       if (!firstName || !lastName || !email || !password || !userRole) {
-        setSnackBarMessage({
-          message: "Please fill all fields",
-          color: "error",
-        });
+        showSnackbar("Please fill all fields", "error");
         return;
       }
 
@@ -102,10 +95,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
           userType: userRole === "admin" ? 1 : 0,
         })
         .then(() => {
-          setSnackBarMessage({
-            message: "User created successfully",
-            color: "success",
-          });
+          showSnackbar("User created successfully", "success");
           queryClient
             .invalidateQueries({ queryKey: tenantGetUsersKey })
             .then(() => {
@@ -113,10 +103,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             });
         })
         .catch(() => {
-          setSnackBarMessage({
-            message: "Failed to create user",
-            color: "error",
-          });
+          showSnackbar("Failed to create user", "error");
         })
         .finally(() => setIsLoading(false));
     }
@@ -219,20 +206,6 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
           </LoadingButton>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={!!snackBarMessage}
-        autoHideDuration={6000}
-        onClose={() => setSnackBarMessage(undefined)}
-      >
-        <Alert
-          onClose={() => setSnackBarMessage(undefined)}
-          severity={snackBarMessage?.color}
-          variant="filled"
-          sx={{ width: "100%" }}
-        >
-          {snackBarMessage?.message}
-        </Alert>
-      </Snackbar>
     </LocalizationProvider>
   );
 };

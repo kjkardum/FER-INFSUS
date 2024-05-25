@@ -1,5 +1,5 @@
 "use client";
-import { Box, IconButton, Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
 import EmployeesTable from "@/modules/organization/OrganizationContainer/components/EmployeesTable";
 import React, { useState } from "react";
 import useTenantGetUsers from "@/api/hooks/TenantEndpoint/useTenantGetUsers";
@@ -21,7 +21,7 @@ const EmployeesContainer = () => {
   };
 
   return (
-    <Box height={"100%"}>
+    <>
       <Typography variant={"h5"} marginBottom={"1rem"}>
         Employees
         <IconButton sx={{ ml: "0.5rem" }} onClick={handleCreateUser}>
@@ -34,7 +34,7 @@ const EmployeesContainer = () => {
         open={createUserModalOpen}
         handleClose={handleClose}
       />
-    </Box>
+    </>
   );
 };
 

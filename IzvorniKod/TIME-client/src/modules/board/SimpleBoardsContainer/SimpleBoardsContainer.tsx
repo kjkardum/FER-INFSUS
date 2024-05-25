@@ -1,12 +1,12 @@
 "use client";
 import { Box, Button, Divider, Typography } from "@mui/material";
-import useTaskboardGetAllBoards from "@/api/hooks/TaskboardEndpoint/useTaskboardGetBoards";
 import React from "react";
 import WholeSectionLoading from "@/components/WholeSectionLoading/WholeSectionLoading";
 import Link from "next/link";
+import useTaskboardGetAssignedBoards from "@/api/hooks/TaskboardEndpoint/useTaskboardGetAssignedBoards";
 
 const SimpleBoardsContainer = () => {
-  const { data, isLoading, isSuccess } = useTaskboardGetAllBoards();
+  const { data, isLoading, isSuccess } = useTaskboardGetAssignedBoards();
 
   return (
     <Box height={"100%"}>

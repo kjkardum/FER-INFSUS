@@ -102,6 +102,254 @@ export interface ProblemDetails {
 /**
  * 
  * @export
+ * @interface TaskItemAssignCommand
+ */
+export interface TaskItemAssignCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemAssignCommand
+     */
+    'assignedUserId': string | null;
+}
+/**
+ * 
+ * @export
+ * @interface TaskItemChangeDescriptionCommand
+ */
+export interface TaskItemChangeDescriptionCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemChangeDescriptionCommand
+     */
+    'newDescription': string | null;
+}
+/**
+ * 
+ * @export
+ * @interface TaskItemChangeStateCommand
+ */
+export interface TaskItemChangeStateCommand {
+    /**
+     * 
+     * @type {TaskItemState}
+     * @memberof TaskItemChangeStateCommand
+     */
+    'newState': TaskItemState;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface TaskItemChangeTaskboardCommand
+ */
+export interface TaskItemChangeTaskboardCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemChangeTaskboardCommand
+     */
+    'newTaskboardId': string;
+}
+/**
+ * 
+ * @export
+ * @interface TaskItemCreateCommand
+ */
+export interface TaskItemCreateCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemCreateCommand
+     */
+    'name': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemCreateCommand
+     */
+    'description': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemCreateCommand
+     */
+    'taskboardId'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface TaskItemDetailedDto
+ */
+export interface TaskItemDetailedDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemDetailedDto
+     */
+    'id'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemDetailedDto
+     */
+    'name': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemDetailedDto
+     */
+    'description': string | null;
+    /**
+     * 
+     * @type {TaskItemState}
+     * @memberof TaskItemDetailedDto
+     */
+    'state'?: TaskItemState;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemDetailedDto
+     */
+    'taskboardId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemDetailedDto
+     */
+    'assignedUserId'?: string | null;
+    /**
+     * 
+     * @type {UserDto}
+     * @memberof TaskItemDetailedDto
+     */
+    'assignedUser'?: UserDto;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemDetailedDto
+     */
+    'createdAt'?: string;
+    /**
+     * 
+     * @type {Array<TaskItemHistoryLogDto>}
+     * @memberof TaskItemDetailedDto
+     */
+    'historyLogs'?: Array<TaskItemHistoryLogDto> | null;
+}
+
+
+/**
+ * 
+ * @export
+ * @interface TaskItemHistoryLogDto
+ */
+export interface TaskItemHistoryLogDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemHistoryLogDto
+     */
+    'changelog': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemHistoryLogDto
+     */
+    'modifiedAt': string;
+}
+/**
+ * 
+ * @export
+ * @interface TaskItemRenameCommand
+ */
+export interface TaskItemRenameCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemRenameCommand
+     */
+    'newName': string | null;
+}
+/**
+ * 
+ * @export
+ * @interface TaskItemSimpleDto
+ */
+export interface TaskItemSimpleDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemSimpleDto
+     */
+    'id'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemSimpleDto
+     */
+    'name': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemSimpleDto
+     */
+    'description': string | null;
+    /**
+     * 
+     * @type {TaskItemState}
+     * @memberof TaskItemSimpleDto
+     */
+    'state'?: TaskItemState;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemSimpleDto
+     */
+    'taskboardId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemSimpleDto
+     */
+    'assignedUserId'?: string | null;
+    /**
+     * 
+     * @type {UserDto}
+     * @memberof TaskItemSimpleDto
+     */
+    'assignedUser'?: UserDto;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemSimpleDto
+     */
+    'createdAt'?: string;
+}
+
+
+/**
+ * 
+ * @export
+ * @enum {string}
+ */
+
+export const TaskItemState = {
+    NUMBER_0: 0,
+    NUMBER_1: 1,
+    NUMBER_2: 2,
+    NUMBER_3: 3,
+    NUMBER_4: 4
+} as const;
+
+export type TaskItemState = typeof TaskItemState[keyof typeof TaskItemState];
+
+
+/**
+ * 
+ * @export
  * @interface TaskboardAddUserCommand
  */
 export interface TaskboardAddUserCommand {
@@ -140,6 +388,43 @@ export interface TaskboardCreateCommand {
 /**
  * 
  * @export
+ * @interface TaskboardDetailedDto
+ */
+export interface TaskboardDetailedDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardDetailedDto
+     */
+    'id'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardDetailedDto
+     */
+    'name': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardDetailedDto
+     */
+    'description': string | null;
+    /**
+     * 
+     * @type {Array<TaskItemSimpleDto>}
+     * @memberof TaskboardDetailedDto
+     */
+    'taskItems'?: Array<TaskItemSimpleDto> | null;
+    /**
+     * 
+     * @type {Array<UserDto>}
+     * @memberof TaskboardDetailedDto
+     */
+    'taskboardUsers'?: Array<UserDto> | null;
+}
+/**
+ * 
+ * @export
  * @interface TaskboardRemoveUserCommand
  */
 export interface TaskboardRemoveUserCommand {
@@ -155,6 +440,31 @@ export interface TaskboardRemoveUserCommand {
      * @memberof TaskboardRemoveUserCommand
      */
     'userId'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface TaskboardSimpleDto
+ */
+export interface TaskboardSimpleDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardSimpleDto
+     */
+    'id'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardSimpleDto
+     */
+    'name': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskboardSimpleDto
+     */
+    'description': string | null;
 }
 /**
  * 
@@ -623,6 +933,624 @@ export class StatusApi extends BaseAPI {
 
 
 /**
+ * TaskItemApi - axios parameter creator
+ * @export
+ */
+export const TaskItemApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemAssignCommand} [taskItemAssignCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdAssignPost: async (id: string, taskItemAssignCommand?: TaskItemAssignCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskItemIdAssignPost', 'id', id)
+            const localVarPath = `/api/TaskItem/{id}/assign`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskItemAssignCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeDescriptionCommand} [taskItemChangeDescriptionCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdChangeDescriptionPost: async (id: string, taskItemChangeDescriptionCommand?: TaskItemChangeDescriptionCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskItemIdChangeDescriptionPost', 'id', id)
+            const localVarPath = `/api/TaskItem/{id}/changeDescription`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskItemChangeDescriptionCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeStateCommand} [taskItemChangeStateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdChangeStatePost: async (id: string, taskItemChangeStateCommand?: TaskItemChangeStateCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskItemIdChangeStatePost', 'id', id)
+            const localVarPath = `/api/TaskItem/{id}/changeState`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskItemChangeStateCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdDelete: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskItemIdDelete', 'id', id)
+            const localVarPath = `/api/TaskItem/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdGet: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskItemIdGet', 'id', id)
+            const localVarPath = `/api/TaskItem/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeTaskboardCommand} [taskItemChangeTaskboardCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdMovePost: async (id: string, taskItemChangeTaskboardCommand?: TaskItemChangeTaskboardCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskItemIdMovePost', 'id', id)
+            const localVarPath = `/api/TaskItem/{id}/move`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskItemChangeTaskboardCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemRenameCommand} [taskItemRenameCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdRenamePost: async (id: string, taskItemRenameCommand?: TaskItemRenameCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTaskItemIdRenamePost', 'id', id)
+            const localVarPath = `/api/TaskItem/{id}/rename`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskItemRenameCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {TaskItemCreateCommand} [taskItemCreateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemPost: async (taskItemCreateCommand?: TaskItemCreateCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/TaskItem`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(taskItemCreateCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * TaskItemApi - functional programming interface
+ * @export
+ */
+export const TaskItemApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = TaskItemApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemAssignCommand} [taskItemAssignCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemIdAssignPost(id: string, taskItemAssignCommand?: TaskItemAssignCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemIdAssignPost(id, taskItemAssignCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemIdAssignPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeDescriptionCommand} [taskItemChangeDescriptionCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemIdChangeDescriptionPost(id: string, taskItemChangeDescriptionCommand?: TaskItemChangeDescriptionCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemIdChangeDescriptionPost(id, taskItemChangeDescriptionCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemIdChangeDescriptionPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeStateCommand} [taskItemChangeStateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemIdChangeStatePost(id: string, taskItemChangeStateCommand?: TaskItemChangeStateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemIdChangeStatePost(id, taskItemChangeStateCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemIdChangeStatePost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemIdDelete(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemIdDelete(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemIdDelete']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskItemDetailedDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemIdGet(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemIdGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeTaskboardCommand} [taskItemChangeTaskboardCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemIdMovePost(id: string, taskItemChangeTaskboardCommand?: TaskItemChangeTaskboardCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemIdMovePost(id, taskItemChangeTaskboardCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemIdMovePost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemRenameCommand} [taskItemRenameCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemIdRenamePost(id: string, taskItemRenameCommand?: TaskItemRenameCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemIdRenamePost(id, taskItemRenameCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemIdRenamePost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {TaskItemCreateCommand} [taskItemCreateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemPost(taskItemCreateCommand?: TaskItemCreateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskItemDetailedDto>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemPost(taskItemCreateCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * TaskItemApi - factory interface
+ * @export
+ */
+export const TaskItemApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = TaskItemApiFp(configuration)
+    return {
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemAssignCommand} [taskItemAssignCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdAssignPost(id: string, taskItemAssignCommand?: TaskItemAssignCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskItemIdAssignPost(id, taskItemAssignCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeDescriptionCommand} [taskItemChangeDescriptionCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdChangeDescriptionPost(id: string, taskItemChangeDescriptionCommand?: TaskItemChangeDescriptionCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskItemIdChangeDescriptionPost(id, taskItemChangeDescriptionCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeStateCommand} [taskItemChangeStateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdChangeStatePost(id: string, taskItemChangeStateCommand?: TaskItemChangeStateCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskItemIdChangeStatePost(id, taskItemChangeStateCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdDelete(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskItemIdDelete(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdGet(id: string, options?: any): AxiosPromise<TaskItemDetailedDto> {
+            return localVarFp.apiTaskItemIdGet(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemChangeTaskboardCommand} [taskItemChangeTaskboardCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdMovePost(id: string, taskItemChangeTaskboardCommand?: TaskItemChangeTaskboardCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskItemIdMovePost(id, taskItemChangeTaskboardCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {TaskItemRenameCommand} [taskItemRenameCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemIdRenamePost(id: string, taskItemRenameCommand?: TaskItemRenameCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTaskItemIdRenamePost(id, taskItemRenameCommand, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {TaskItemCreateCommand} [taskItemCreateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemPost(taskItemCreateCommand?: TaskItemCreateCommand, options?: any): AxiosPromise<TaskItemDetailedDto> {
+            return localVarFp.apiTaskItemPost(taskItemCreateCommand, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * TaskItemApi - object-oriented interface
+ * @export
+ * @class TaskItemApi
+ * @extends {BaseAPI}
+ */
+export class TaskItemApi extends BaseAPI {
+    /**
+     * 
+     * @param {string} id 
+     * @param {TaskItemAssignCommand} [taskItemAssignCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemIdAssignPost(id: string, taskItemAssignCommand?: TaskItemAssignCommand, options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemIdAssignPost(id, taskItemAssignCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {TaskItemChangeDescriptionCommand} [taskItemChangeDescriptionCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemIdChangeDescriptionPost(id: string, taskItemChangeDescriptionCommand?: TaskItemChangeDescriptionCommand, options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemIdChangeDescriptionPost(id, taskItemChangeDescriptionCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {TaskItemChangeStateCommand} [taskItemChangeStateCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemIdChangeStatePost(id: string, taskItemChangeStateCommand?: TaskItemChangeStateCommand, options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemIdChangeStatePost(id, taskItemChangeStateCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemIdDelete(id: string, options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemIdDelete(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemIdGet(id: string, options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemIdGet(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {TaskItemChangeTaskboardCommand} [taskItemChangeTaskboardCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemIdMovePost(id: string, taskItemChangeTaskboardCommand?: TaskItemChangeTaskboardCommand, options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemIdMovePost(id, taskItemChangeTaskboardCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {TaskItemRenameCommand} [taskItemRenameCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemIdRenamePost(id: string, taskItemRenameCommand?: TaskItemRenameCommand, options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemIdRenamePost(id, taskItemRenameCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {TaskItemCreateCommand} [taskItemCreateCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemPost(taskItemCreateCommand?: TaskItemCreateCommand, options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemPost(taskItemCreateCommand, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * TaskboardApi - axios parameter creator
  * @export
  */
@@ -927,7 +1855,7 @@ export const TaskboardApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiTaskboardAllGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiTaskboardAllGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskboardSimpleDto>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardAllGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardAllGet']?.[localVarOperationServerIndex]?.url;
@@ -950,7 +1878,7 @@ export const TaskboardApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiTaskboardAssignedGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiTaskboardAssignedGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskboardSimpleDto>>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardAssignedGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardAssignedGet']?.[localVarOperationServerIndex]?.url;
@@ -974,7 +1902,7 @@ export const TaskboardApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiTaskboardIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiTaskboardIdGet(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskboardDetailedDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardIdGet(id, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardIdGet']?.[localVarOperationServerIndex]?.url;
@@ -999,7 +1927,7 @@ export const TaskboardApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiTaskboardPost(taskboardCreateCommand?: TaskboardCreateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+        async apiTaskboardPost(taskboardCreateCommand?: TaskboardCreateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskboardSimpleDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskboardPost(taskboardCreateCommand, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TaskboardApi.apiTaskboardPost']?.[localVarOperationServerIndex]?.url;
@@ -1032,7 +1960,7 @@ export const TaskboardApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiTaskboardAllGet(options?: any): AxiosPromise<void> {
+        apiTaskboardAllGet(options?: any): AxiosPromise<Array<TaskboardSimpleDto>> {
             return localVarFp.apiTaskboardAllGet(options).then((request) => request(axios, basePath));
         },
         /**
@@ -1049,7 +1977,7 @@ export const TaskboardApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiTaskboardAssignedGet(options?: any): AxiosPromise<void> {
+        apiTaskboardAssignedGet(options?: any): AxiosPromise<Array<TaskboardSimpleDto>> {
             return localVarFp.apiTaskboardAssignedGet(options).then((request) => request(axios, basePath));
         },
         /**
@@ -1067,7 +1995,7 @@ export const TaskboardApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiTaskboardIdGet(id: string, options?: any): AxiosPromise<void> {
+        apiTaskboardIdGet(id: string, options?: any): AxiosPromise<TaskboardDetailedDto> {
             return localVarFp.apiTaskboardIdGet(id, options).then((request) => request(axios, basePath));
         },
         /**
@@ -1086,7 +2014,7 @@ export const TaskboardApiFactory = function (configuration?: Configuration, base
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiTaskboardPost(taskboardCreateCommand?: TaskboardCreateCommand, options?: any): AxiosPromise<void> {
+        apiTaskboardPost(taskboardCreateCommand?: TaskboardCreateCommand, options?: any): AxiosPromise<TaskboardSimpleDto> {
             return localVarFp.apiTaskboardPost(taskboardCreateCommand, options).then((request) => request(axios, basePath));
         },
         /**

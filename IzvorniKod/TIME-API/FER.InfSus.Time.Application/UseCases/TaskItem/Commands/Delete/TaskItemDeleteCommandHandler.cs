@@ -16,15 +16,16 @@ public class TaskItemDeleteCommandHandler(
         var taskItem = await taskItemRepository.GetById(request.Id, cancellationToken);
         if (taskItem == null)
         {
-            throw new EntityNotFoundException("Task item not found");
+            throw new EntityNotFoundException("Zadatak nije pronađen");
         }
         if (requestor?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("You can't delete task items");
+            throw new ForbiddenAccessException("Samo admini mogu brisati zadatke");
         }
         if (taskItem.Taskboard?.TenantId != requestor.TenantId)
         {
-            throw new ForbiddenAccessException("You can't delete task items from taskboards you are not a member of");
+            throw new ForbiddenAccessException(
+                "Nemate dozvolu za brisanje zadataka sa radnih ploča koje nisu u vašoj organizaciji");
         }
         await taskItemRepository.Delete(taskItem, cancellationToken);
     }

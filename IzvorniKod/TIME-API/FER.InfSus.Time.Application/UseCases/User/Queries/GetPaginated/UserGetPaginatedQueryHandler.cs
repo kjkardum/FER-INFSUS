@@ -20,7 +20,7 @@ public class UserGetPaginatedQueryHandler(
         var requestor = await userRepository.GetByUserId(request.RequestorId);
         if (requestor?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("You are not authorized to perform this action");
+            throw new ForbiddenAccessException("Nemate dozvolu za izvršenje ove akcije");
         }
         var users = await
             userRepository.GetPaginated(

@@ -19,7 +19,7 @@ public class TaskboardGetAllByTenantQueryHandler(
         var requestor = await userRepository.GetByUserId(request.RequestorId);
         if (requestor?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("Only admins can get taskboards");
+            throw new ForbiddenAccessException("Samo admini mogu dohvatiti sve radne ploče");
         }
         var taskboards = await taskboardRepository.GetTenantBoards(requestor.TenantId);
         var mappedTaskboards = mapper.Map<ICollection<TaskboardSimpleDto>>(taskboards);

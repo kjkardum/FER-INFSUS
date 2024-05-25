@@ -16,7 +16,7 @@ public class TaskItemChangeDescriptionCommandHandler(
         var taskItem = await taskItemRepository.GetById(request.Id, cancellationToken);
         if (taskItem == null)
         {
-            throw new EntityNotFoundException("Task item not found");
+            throw new EntityNotFoundException("Zadatak nije pronađen");
         }
         if (taskItem.Description == request.NewDescription)
         {
@@ -25,13 +25,13 @@ public class TaskItemChangeDescriptionCommandHandler(
         if (taskItem.Taskboard?.TenantId != requestor?.TenantId)
         {
             throw new ForbiddenAccessException(
-                "You can't change description of task items for taskboards that are not in your tenant");
+                "Nemate dozvolu za promjenu opisa zadatka za radne ploče koje nisu u vašoj organizaciji");
         }
         if (requestor?.UserType != UserType.ADMIN
             && taskItem.Taskboard!.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
         {
             throw new ForbiddenAccessException(
-                "You can't change description of task items for taskboards you are not a member of");
+                "Nemate dozvolu za promjenu opisa zadatka za radne ploče na kojima niste član");
         }
 
         var now = DateTime.UtcNow;

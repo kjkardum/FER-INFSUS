@@ -22,20 +22,20 @@ public class TaskboardAddUserCommandHandler(
         var requestor = await userRepository.GetByUserId(request.RequestorId);
         if (requestor?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("Only admins can add users to taskboards");
+            throw new ForbiddenAccessException("Samo admini mogu dodavati korisnike na radnu ploču");
         }
         var taskboard = await taskboardRepository.GetBoardById(request.TaskboardId);
         if (taskboard == null)
         {
-            throw new EntityNotFoundException("Taskboard not found");
+            throw new EntityNotFoundException("Radna ploča nije pronađena");
         }
         if (taskboard.TenantId != requestor.TenantId)
         {
-            throw new ForbiddenAccessException("You don't have permission to add users to this taskboard");
+            throw new ForbiddenAccessException("Nemate dozvolu za dodavanje korisnika na ovu radnu ploču");
         }
         if (taskboard.TaskboardUsers!.Any(u => u.UserId == request.UserId))
         {
-            throw new EntityAlreadyExistsException("User is already in the taskboard");
+            throw new EntityAlreadyExistsException("Korisnik je već dodan na radnu ploču");
         }
 
         await taskboardRepository.AddUserToBoard(request.TaskboardId, request.UserId);

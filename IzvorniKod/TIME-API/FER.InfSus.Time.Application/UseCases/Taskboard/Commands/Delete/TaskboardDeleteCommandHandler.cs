@@ -21,17 +21,17 @@ public class TaskboardDeleteCommandHandler(
         var requestor = await userRepository.GetByUserId(request.RequestorId);
         if (requestor?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("Only admins can delete taskboards");
+            throw new ForbiddenAccessException("Sammo admini mogu brisati radne ploče");
         }
 
         var taskboard = await taskboardRepository.GetBoardById(request.TaskboardId);
         if (taskboard == null)
         {
-            throw new EntityNotFoundException("Taskboard not found");
+            throw new EntityNotFoundException("Radna ploča nije pronađena");
         }
         if (taskboard.TenantId != requestor.TenantId)
         {
-            throw new ForbiddenAccessException("You don't have permission to delete this taskboard");
+            throw new ForbiddenAccessException("Nemate dozvolu za brisanje ove radne ploče");
         }
         await taskboardRepository.DeleteBoard(taskboard);
     }

@@ -20,17 +20,18 @@ public class UserRegistrationCommandHandler(
         if (requestor?.UserType != UserType.ADMIN)
         {
             throw new ForbiddenAccessException("Only admins can create users");
+            throw new ForbiddenAccessException("Samo admini mogu kreirati korisnike");
         }
 
         if (await userRepository.DoesUserExist(request.NormalizedEmail))
         {
-            throw new EntityAlreadyExistsException("User with this email already exists");
+            throw new EntityAlreadyExistsException("Korisnik s ovim emailom već postoji");
         }
 
         var passwordHash = signInService.HashPassword(request.Password);
         if (passwordHash == null)
         {
-            throw new BadRequestException("Invalid password");
+            throw new BadRequestException("Nije moguće procesirati lozinku");
         }
 
         var user = new Domain.Entities.User {

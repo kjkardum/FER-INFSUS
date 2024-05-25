@@ -12,16 +12,16 @@ public class UserDeleteCommandHandler(IUserRepository userRepository) : IRequest
         var requestor = await userRepository.GetByUserId(request.RequestorId);
         if (requestor?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("Only admins can delete users");
+            throw new ForbiddenAccessException("Samo admini mogu brisati korisnike");
         }
         var user = await userRepository.GetByUserId(request.Id);
         if (user == null)
         {
-            throw new EntityNotFoundException("User not found");
+            throw new EntityNotFoundException("Korisnik nije pronađen");
         }
         if (user.TenantId != requestor.TenantId)
         {
-            throw new ForbiddenAccessException("You can't delete users that are not in your tenant");
+            throw new ForbiddenAccessException("Nemate dozvolu za brisanje korisnika koji nisu u vašoj organizaciji");
         }
 
         await userRepository.Delete(user);

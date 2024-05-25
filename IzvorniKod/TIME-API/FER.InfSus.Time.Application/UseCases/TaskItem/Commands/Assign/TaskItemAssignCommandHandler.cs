@@ -16,7 +16,7 @@ public class TaskItemAssignCommandHandler(
         var taskItem = await taskItemRepository.GetById(request.Id, cancellationToken);
         if (taskItem == null)
         {
-            throw new EntityNotFoundException("Task item not found");
+            throw new EntityNotFoundException("Zadatak nije pronađen");
         }
         if (taskItem.AssignedUserId == request.AssignedUserId)
         {
@@ -25,19 +25,19 @@ public class TaskItemAssignCommandHandler(
         if (taskItem.Taskboard?.TenantId != requestor?.TenantId)
         {
             throw new ForbiddenAccessException(
-                "You can't assign task items for taskboards that are not in your tenant");
+            "Nemate dozvolu za dodjeljivanje zadataka na radne ploče koje nisu u vašoj organizaciji");
         }
         if (requestor?.UserType != UserType.ADMIN
             && taskItem.Taskboard!.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
         {
             throw new ForbiddenAccessException(
-                "You can't assign task items for taskboards you are not a member of");
+                "Nemate dozvolu za dodjeljivanje zadataka na radne ploče na kojima niste član");
         }
         if (request.AssignedUserId != null
             && taskItem.Taskboard!.TaskboardUsers!.All(tu => tu.UserId != request.AssignedUserId))
         {
             throw new ForbiddenAccessException(
-                "You can't assign task items to users who are not members of the taskboard");
+                "Ne možete imate dodijeliti zadatke korisnicima koji nisu članovi radne ploče");
         }
 
         var now = DateTime.UtcNow;

@@ -18,16 +18,16 @@ public class TaskboardGetByIdQueryHandler(
         var taskboard = await taskboardRepository.GetBoardById(request.Id);
         if (taskboard == null || requestor == null)
         {
-            throw new EntityNotFoundException("Taskboard not found");
+            throw new EntityNotFoundException("Radna ploča nije pronađena");
         }
         if (taskboard.TenantId != requestor.TenantId)
         {
-            throw new ForbiddenAccessException("You don't have permission to get this taskboard");
+            throw new ForbiddenAccessException("Nemate dozvolu za dohvaćanje ove radne ploče");
         }
         if (requestor.UserType != UserType.ADMIN &&
             taskboard.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
         {
-            throw new ForbiddenAccessException("You don't have permission to get this taskboard");
+            throw new ForbiddenAccessException("Nemate dozvolu za dohvaćanje ove radne ploče jer niste član");
         }
         var mappedTaskboard = mapper.Map<TaskboardDetailedDto>(taskboard);
         return mappedTaskboard;

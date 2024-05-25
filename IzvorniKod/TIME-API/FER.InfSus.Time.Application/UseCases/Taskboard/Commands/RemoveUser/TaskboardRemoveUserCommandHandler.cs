@@ -14,20 +14,20 @@ public class TaskboardRemoveUserCommandHandler(
         var requestor = await userRepository.GetByUserId(request.RequestorId);
         if (requestor?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("Only admins can remove users from taskboards");
+            throw new ForbiddenAccessException("Samo admini mogu uklanjati korisnike s radnih ploča");
         }
         var taskboard = await taskboardRepository.GetBoardById(request.TaskboardId);
         if (taskboard == null)
         {
-            throw new EntityNotFoundException("Taskboard not found");
+            throw new EntityNotFoundException("Radna ploča nije pronađena");
         }
         if (taskboard.TenantId != requestor.TenantId)
         {
-            throw new ForbiddenAccessException("You don't have permission to remove users from this taskboard");
+            throw new ForbiddenAccessException("Nemate dozvolu za uklanjanje korisnika s ove radne ploče");
         }
         if (taskboard.TaskboardUsers!.All(u => u.UserId != request.UserId))
         {
-            throw new EntityNotFoundException("User is not in the taskboard");
+            throw new EntityNotFoundException("Korisnik nema pristup radnoj ploči");
         }
         await taskboardRepository.RemoveUserFromBoard(request.TaskboardId, request.UserId);
     }

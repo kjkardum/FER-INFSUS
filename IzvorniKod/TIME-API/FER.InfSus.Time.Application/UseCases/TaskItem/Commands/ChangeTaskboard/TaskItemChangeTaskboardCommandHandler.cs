@@ -17,7 +17,7 @@ public class TaskItemChangeTaskboardCommandHandler(
         var taskItem = await taskItemRepository.GetById(request.Id, cancellationToken);
         if (taskItem == null)
         {
-            throw new EntityNotFoundException("Task item not found");
+            throw new EntityNotFoundException("Zadatak nije pronađen");
         }
         if (taskItem.TaskboardId == request.NewTaskboardId)
         {
@@ -26,25 +26,25 @@ public class TaskItemChangeTaskboardCommandHandler(
         var taskboard = await taskboardRepository.GetBoardById(request.NewTaskboardId);
         if (taskboard == null)
         {
-            throw new EntityNotFoundException("New taskboard not found");
+            throw new EntityNotFoundException("Nova radna ploča nije pronađena");
         }
         if (taskboard.TenantId != requestor?.TenantId || taskItem.Taskboard!.TenantId != requestor.TenantId)
 
         {
             throw new ForbiddenAccessException(
-                "You can't change taskboard of task items to taskboards that are not in your tenant");
+                "Nemate dozvolu za promjenu radne ploče zadatka na one koje nisu u vašoj organizaciji");
         }
         if (requestor.UserType != UserType.ADMIN
             && taskboard.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
         {
             throw new ForbiddenAccessException(
-                "You can't change taskboard of task items to taskboards you are not a member of");
+                "Nemate dozvolu za promjenu radne ploče zadatka na one na kojima niste član");
         }
         if (taskItem.AssignedUserId != null
             && taskboard.TaskboardUsers!.All(tu => tu.UserId != taskItem.AssignedUserId))
         {
             throw new ForbiddenAccessException(
-                "You can't change taskboard of task items that are assigned to users that are not members of the new taskboard");
+                "Ne možete promijeniti radnu ploču zadataka koji su dodijeljeni korisnicima koji nisu članovi nove radne ploče");
         }
 
         var now = DateTime.UtcNow;

@@ -20,17 +20,18 @@ public class TaskItemCreateCommandHandler(
         var taskboard = await taskboardRepository.GetBoardById(request.TaskboardId);
         if (taskboard == null)
         {
-            throw new EntityNotFoundException("Taskboard not found");
+            throw new EntityNotFoundException("Radna ploča nije pronađena");
         }
         if (taskboard.TenantId != requestor?.TenantId)
         {
             throw new ForbiddenAccessException(
-                "You can't create task items for taskboards that are not in your tenant");
+                "Nemate dozvolu za stvaranje zadataka za radne ploče koje nisu u vašoj organizaciji");
         }
         if (requestor.UserType != UserType.ADMIN
             && taskboard.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
         {
-            throw new ForbiddenAccessException("You can't create task items for taskboards you are not a member of");
+            throw new ForbiddenAccessException(
+                "Nemate dozvolu za stvaranje zadataka za radne ploče na kojima niste član");
         }
 
         var now = DateTime.UtcNow;

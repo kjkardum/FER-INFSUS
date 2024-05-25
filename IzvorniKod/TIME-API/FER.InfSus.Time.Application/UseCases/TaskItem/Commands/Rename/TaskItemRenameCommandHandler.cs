@@ -16,7 +16,7 @@ public class TaskItemRenameCommandHandler(
         var taskItem = await taskItemRepository.GetById(request.Id, cancellationToken);
         if (taskItem == null)
         {
-            throw new EntityNotFoundException("Task item not found");
+            throw new EntityNotFoundException("Zadatak nije pronađen");
         }
         if (taskItem.Name == request.NewName)
         {
@@ -25,12 +25,13 @@ public class TaskItemRenameCommandHandler(
         if (taskItem.Taskboard!.TenantId != requestor?.TenantId)
         {
             throw new ForbiddenAccessException(
-                "You can't rename task items for taskboards that are not in your tenant");
+                "Nemate dozvolu za promjenu naziva zadatka sa radne ploče koje nisu u vašoj organizaciji");
         }
         if (requestor.UserType != UserType.ADMIN
             && taskItem.Taskboard!.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
         {
-            throw new ForbiddenAccessException("You can't rename task items for taskboards you are not a member of");
+            throw new ForbiddenAccessException(
+                "Nemate dozvolu za promjenu naziva zadatka sa radne ploče na kojoj niste član");
         }
 
         var now = DateTime.UtcNow;

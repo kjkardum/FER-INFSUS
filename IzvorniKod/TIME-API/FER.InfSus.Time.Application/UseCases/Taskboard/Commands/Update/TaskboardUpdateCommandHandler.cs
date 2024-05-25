@@ -14,16 +14,16 @@ public class TaskboardUpdateCommandHandler(
         var requestor = await userRepository.GetByUserId(request.RequestorId);
         if (requestor?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("Only admins can update taskboards");
+            throw new ForbiddenAccessException("Samo admini mogu ažurirati radne ploče");
         }
         var taskboard = await taskboardRepository.GetBoardById(request.Id);
         if (taskboard == null)
         {
-            throw new EntityNotFoundException("Taskboard not found");
+            throw new EntityNotFoundException("Radna ploča nije pronađena");
         }
         if (taskboard.TenantId != requestor.TenantId)
         {
-            throw new ForbiddenAccessException("You don't have permission to update this taskboard");
+            throw new ForbiddenAccessException("Nemate dozvolu za ažuriranje ove radne ploče");
         }
         taskboard.Name = request.Name;
         taskboard.Description = request.Description;

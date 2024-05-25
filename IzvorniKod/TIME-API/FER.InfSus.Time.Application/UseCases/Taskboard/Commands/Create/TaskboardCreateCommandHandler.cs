@@ -23,7 +23,7 @@ public class TaskboardCreateCommandHandler(
         var user = await userRepository.GetByUserId(request.RequestorId);
         if (user?.UserType != UserType.ADMIN)
         {
-            throw new ForbiddenAccessException("Only admins can create taskboards");
+            throw new ForbiddenAccessException("Samo admini mogu kreirati radne ploče");
         }
 
         var taskboard = new Domain.Entities.Taskboard

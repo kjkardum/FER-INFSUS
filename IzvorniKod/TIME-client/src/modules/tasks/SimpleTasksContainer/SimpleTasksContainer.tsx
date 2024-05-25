@@ -18,7 +18,7 @@ const SimpleTasksContainer = () => {
   return (
     <Box>
       <Typography variant={"h5"} marginBottom={"1rem"} align={"center"}>
-        My Tasks
+        Moji zadaci
       </Typography>
       <Box height={"350px"} width={"100%"}>
         <DataGrid rows={rows} columns={columns} />

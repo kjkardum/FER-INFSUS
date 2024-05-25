@@ -158,7 +158,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
         fullWidth={true}
       >
         <DialogTitle id="dialog-userManagment-prompt-title">
-          {user ? "Edit" : "Create new"} user
+          {user ? "Uredi korisnika" : "Dodaj korisnika"}
         </DialogTitle>
         <DialogContent>
           <Stack
@@ -168,14 +168,14 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             component={"form"}
           >
             <TextField
-              label={"First Name"}
+              label={"Ime"}
               fullWidth
               type={"text"}
               value={firstName}
               onChange={(e) => handleStringChange(e, setFirstName)}
             />
             <TextField
-              label={"Last Name"}
+              label={"Prezime"}
               fullWidth
               type={"text"}
               value={lastName}
@@ -183,7 +183,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             />
             {!user && (
               <TextField
-                label={"Email"}
+                label={"E-mail"}
                 fullWidth
                 type={"email"}
                 value={email}
@@ -191,20 +191,20 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
               />
             )}
             <TextField
-              label={"Password"}
+              label={"Lozinka"}
               fullWidth
               type={"password"}
               value={password}
               onChange={(e) => handleStringChange(e, setPassword)}
             />
             <DatePicker
-              label={"Date of birth"}
+              label={"Datum rođenja"}
               value={dateOfBirth}
               onChange={handleDateChange}
             />
             <FormControl>
               <FormLabel id="demo-controlled-radio-buttons-group">
-                Role
+                Uloga korisnika
               </FormLabel>
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
@@ -216,12 +216,12 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
                 <FormControlLabel
                   value="admin"
                   control={<Radio />}
-                  label="Admin"
+                  label="Administrator"
                 />
                 <FormControlLabel
                   value="user"
                   control={<Radio />}
-                  label="User"
+                  label="Korisnik"
                 />
               </RadioGroup>
             </FormControl>
@@ -234,7 +234,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             onClick={handleClose}
             autoFocus
           >
-            Cancel
+            Poništi
           </Button>
           <LoadingButton
             variant={"contained"}
@@ -242,7 +242,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             onClick={handleSave}
             loading={isLoading}
           >
-            Save
+            Spremi
           </LoadingButton>
         </DialogActions>
       </Dialog>

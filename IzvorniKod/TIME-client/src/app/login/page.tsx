@@ -57,10 +57,10 @@ export default function Login() {
           width={500}
         >
           <Typography variant={"h4"} align={"center"} gutterBottom>
-            Welcome! <WavingHand sx={{ color: "#ffcc33" }} />
+            Dobrodošao! <WavingHand sx={{ color: "#ffcc33" }} />
           </Typography>
           <TextField
-            label={"Email:"}
+            label={"E-mail:"}
             name={"email"}
             type={"email"}
             color={"secondary"}
@@ -69,7 +69,7 @@ export default function Login() {
             onChange={(event) => setEmail(event.target.value)}
           />
           <TextField
-            label={"Password:"}
+            label={"Lozinka:"}
             name={"password"}
             type={"password"}
             value={password}
@@ -84,7 +84,7 @@ export default function Login() {
               color={"secondary"}
               sx={{ width: 200, height: 40, marginTop: "1rem" }}
             >
-              Login
+              Prijavi se
             </LoadingButton>
           </Box>
         </Box>

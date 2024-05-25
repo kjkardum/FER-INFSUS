@@ -120,7 +120,7 @@ const TasksList = ({ board }: Props) => {
         mb={"1rem"}
       >
         <Typography variant="h6" gutterBottom>
-          Tasks
+          Zadaci
         </Typography>
 
         <Button
@@ -130,11 +130,11 @@ const TasksList = ({ board }: Props) => {
           sx={{ ml: "0.5rem" }}
           onClick={handleCreateTask}
         >
-          Add Task
+          Dodaj zadatak
         </Button>
       </Stack>
       {(!tasks || tasks.length === 0) && (
-        <Typography variant="body1">No tasks found.</Typography>
+        <Typography variant="body1">Nema zadataka.</Typography>
       )}
       {Object.keys(groupedTasks).map((key) => (
         <Accordion key={`${key}_${groupedTasks[key].length}`} defaultExpanded>
@@ -147,7 +147,7 @@ const TasksList = ({ board }: Props) => {
               <Chip
                 sx={{ mr: "0.5rem" }}
                 size={"small"}
-                label={`${groupedTasks[key]?.length || 0} tasks`}
+                label={`${groupedTasks[key]?.length || 0} ${(groupedTasks[key]?.length || 0) === 1 ? "zadatak" : "zadataka"}`}
                 color={getColorFromTaskStatus(key as TaskItemState)}
               />
               <Typography variant="subtitle1">{key}</Typography>
@@ -172,7 +172,7 @@ const TasksList = ({ board }: Props) => {
                     <Typography variant="body1">{task.description}</Typography>
                     {/* TODO: clip description if too long */}
                     <Typography variant="body2">
-                      {`Created at: ${task.createdAt ? dayjs(task.createdAt).toDate().toDateString() : dayjs().toDate().toDateString()}`}
+                      {`Kreirano: ${task.createdAt ? dayjs(task.createdAt).format("DD-MM-YYYY HH:mm") : dayjs().format("DD-MM-YYYY HH:mm")}`}
                     </Typography>
                   </Box>
                   <Stack
@@ -189,10 +189,12 @@ const TasksList = ({ board }: Props) => {
                       {task.assignedUser && (
                         <Chip
                           color={"secondary"}
-                          label={`Assigned to: ${task.assignedUser.firstName} ${task.assignedUser.lastName}`}
+                          label={`Dodijeljeno: ${task.assignedUser.firstName} ${task.assignedUser.lastName}`}
                         />
                       )}
-                      {!task.assignedUser && <Chip label={`Not assigned`} />}
+                      {!task.assignedUser && (
+                        <Chip label={`Nije dodijeljeno`} />
+                      )}
                     </Stack>
                     {isAdmin && (
                       <IconButton

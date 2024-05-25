@@ -21,25 +21,26 @@ const DeletePrompt = (props: Props) => {
       onClose={props.handleClose}
       aria-labelledby="dialog-delte-prompt-title"
       aria-describedby="dialog-delete-prompt-description"
+      fullWidth
     >
       <DialogTitle id="dialog-delte-prompt-title">
-        Are you sure you want to delete?
+        Jeste li sigurni da želite obrisati?
       </DialogTitle>
       <DialogContent>
         <DialogContentText id="dialog-delete-prompt-description">
-          Once you delete this, it cannot be undone.
+          Jednom kada obrišete, ne možete vratiti.
         </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={props.handleClose} variant={"outlined"} autoFocus>
-          Cancel
+          Poništi
         </Button>
         <Button
           color={"error"}
           variant={"contained"}
           onClick={props.handleConfirm}
         >
-          Delete
+          Obriši
         </Button>
       </DialogActions>
     </Dialog>

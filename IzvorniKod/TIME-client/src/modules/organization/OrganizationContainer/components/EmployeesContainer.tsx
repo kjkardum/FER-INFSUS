@@ -23,7 +23,7 @@ const EmployeesContainer = () => {
   return (
     <>
       <Typography variant={"h5"} marginBottom={"1rem"}>
-        Employees
+        Zaposlenici
         <IconButton sx={{ ml: "0.5rem" }} onClick={handleCreateUser}>
           <AddCircle />
         </IconButton>

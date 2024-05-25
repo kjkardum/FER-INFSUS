@@ -27,7 +27,7 @@ const ChangeLogItem = ({ changeLog }: Props) => {
               sx={{ textTransform: "none" }}
               variant={"text"}
             >
-              Show more...
+              Prikaži više...
             </Button>
           </>
         )}
@@ -45,13 +45,13 @@ const ChangeLogItem = ({ changeLog }: Props) => {
               sx={{ textTransform: "none" }}
               variant={"text"}
             >
-              Show less
+              Prikaži manje...
             </Button>
           </>
         )}
       </Typography>
       <Typography variant="caption" color={"text.secondary"}>
-        {`Change made on ${(changeLog.modifiedAt ? dayjs(changeLog.modifiedAt) : dayjs()).format("DD-MM-YYYY HH:mm:ss")}`}
+        {`Promijena napraljena na: ${(changeLog.modifiedAt ? dayjs(changeLog.modifiedAt) : dayjs()).format("DD-MM-YYYY HH:mm:ss")}`}
       </Typography>
     </Paper>
   );

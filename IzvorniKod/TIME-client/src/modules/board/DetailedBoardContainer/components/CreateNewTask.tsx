@@ -119,7 +119,7 @@ const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
       aria-describedby="dialog-createNewTask-prompt-description"
       fullWidth={true}
     >
-      <DialogTitle>Create new task for board</DialogTitle>
+      <DialogTitle>Kreiraj novi zadatak</DialogTitle>
       <DialogContent>
         <Stack spacing={2} py={"0.5rem"}>
           <TextField
@@ -127,7 +127,7 @@ const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
             name={"taskName"}
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
-            label="Task name"
+            label={"Ime zadatka"}
             type="text"
             fullWidth
           />
@@ -135,7 +135,7 @@ const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
             value={taskDescription}
             onChange={(e) => setTaskDescription(e.target.value)}
             name={"taskDescription"}
-            label="Task description"
+            label={"Opis zadatka"}
             type="text"
             rows={4}
             fullWidth
@@ -150,7 +150,7 @@ const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
             onChange={(selectedOption) =>
               setAssignedTo(selectedOption?.value ?? "")
             }
-            placeholder={"Assign to user"}
+            placeholder={"Dodijeli zadatak korisniku..."}
             isSearchable={true}
             isClearable={true}
             menuPosition={"fixed"}

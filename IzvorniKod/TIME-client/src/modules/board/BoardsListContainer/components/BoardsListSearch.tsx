@@ -17,17 +17,22 @@ const BoardsListSearch = ({ value, onChange }: Props) => {
         maxWidth: 400,
       }}
     >
-      <IconButton sx={{ p: "10px" }} aria-label="menu">
+      <IconButton sx={{ p: "10px" }} aria-label="menu" disableRipple>
         <DeveloperBoard />
       </IconButton>
       <InputBase
         sx={{ ml: 1, flex: 1 }}
-        placeholder="Search Boards"
-        inputProps={{ "aria-label": "search boards" }}
+        placeholder="Pretraži radne ploče..."
+        inputProps={{ "aria-label": "pretraži radne ploče" }}
         value={value}
         onChange={(e) => onChange?.(e.target.value)}
       />
-      <IconButton type="button" sx={{ p: "10px" }} aria-label="search">
+      <IconButton
+        type="button"
+        sx={{ p: "10px" }}
+        aria-label="search"
+        disableRipple
+      >
         <Search />
       </IconButton>
     </Paper>

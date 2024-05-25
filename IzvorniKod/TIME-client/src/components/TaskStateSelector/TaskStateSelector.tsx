@@ -17,7 +17,7 @@ const TaskStateSelector = ({ taskState, handleStateChange }: Props) => {
   return (
     <FormControl>
       <FormLabel id="controlled-radio-buttons-group-taskStateSelector">
-        Role
+        Stanje zadatka
       </FormLabel>
       <RadioGroup
         aria-labelledby="controlled-radio-buttons-group-taskStateSelector"

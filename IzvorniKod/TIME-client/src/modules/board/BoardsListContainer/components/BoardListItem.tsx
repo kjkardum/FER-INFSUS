@@ -36,7 +36,8 @@ const BoardListItem = (props: Props) => {
             {props.board.name}
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
-            {props.board.taskboardUsers?.length} Users
+            {props.board.taskboardUsers?.length}{" "}
+            {props.board.taskboardUsers?.length === 1 ? "član" : "članova"}
           </Typography>
           <Typography variant="body2">{props.board.description}</Typography>
         </CardContent>

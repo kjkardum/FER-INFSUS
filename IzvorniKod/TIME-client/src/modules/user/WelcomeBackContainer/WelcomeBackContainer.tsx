@@ -7,13 +7,13 @@ const WelcomeBackContainer = () => {
   return (
     <Stack spacing={2}>
       <Typography variant={"h5"} align={"center"}>
-        <WavingHand sx={{ color: "#ffcc33" }} /> Welcome back!
+        <WavingHand sx={{ color: "#ffcc33" }} /> Pozdrav!
       </Typography>
       <Typography variant={"body1"} align={"center"}>
-        We are happy to see you again.
+        Dobrodošli natrag!
       </Typography>
       <Typography variant={"body1"} align={"center"}>
-        Here's where you'll get a summary of the organization, tasks and boards
+        Ovdje možete pronaći sve svoje radne ploče i zadatke.
       </Typography>
     </Stack>
   );

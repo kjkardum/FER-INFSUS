@@ -73,7 +73,7 @@ const UsersList = ({ users, boardId }: Props) => {
         mb={"1rem"}
       >
         <Typography variant="h6" gutterBottom>
-          Users in board
+          Članovi radne ploče
         </Typography>
       </Stack>
       {isAdmin && (
@@ -84,7 +84,7 @@ const UsersList = ({ users, boardId }: Props) => {
             if (!option) return;
             handleAddUserToBoard(option.value);
           }}
-          placeholder={"Add user to board..."}
+          placeholder={"Dodaj korisnika u radnu ploču..."}
           isSearchable={true}
           isClearable={true}
           styles={{

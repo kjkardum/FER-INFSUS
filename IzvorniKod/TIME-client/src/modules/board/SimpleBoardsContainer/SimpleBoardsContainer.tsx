@@ -11,7 +11,7 @@ const SimpleBoardsContainer = () => {
   return (
     <Box height={"100%"}>
       <Typography variant={"h5"} marginBottom={"1rem"} align={"center"}>
-        My Boards
+        Moje radne ploče
       </Typography>
       {isLoading && <WholeSectionLoading />}
       {isSuccess && data && data.length === 0 && (

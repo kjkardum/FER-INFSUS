@@ -215,7 +215,7 @@ const TaskDetailsContainer = ({ task }: Props) => {
               href={"/boards"}
               style={{ textDecoration: "none", color: "inherit" }}
             >
-              <Typography color="inherit">Boards</Typography>
+              <Typography color="inherit">Radne Ploče</Typography>
             </Link>
             <Link
               href={`/board/${task.taskboardId}`}
@@ -228,13 +228,13 @@ const TaskDetailsContainer = ({ task }: Props) => {
 
           {!isEditingTaskName && (
             <Box mb={"1rem"} onClick={() => setIsEditingTaskName(true)}>
-              <Typography variant="h5">{taskName}</Typography>
+              <Typography variant="h4">{taskName}</Typography>
             </Box>
           )}
           {isEditingTaskName && (
             <Stack direction="row" spacing={2} sx={{ mb: "1rem" }}>
               <TextField
-                label="Task name"
+                label={"Ime zadatka"}
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
                 onKeyDown={(e) => {
@@ -285,7 +285,7 @@ const TaskDetailsContainer = ({ task }: Props) => {
               />
             )}
             <Chip
-              label={`Created at: ${task.createdAt ? dayjs(task.createdAt).format("DD-MM-YYYY HH:mm") : ""}`}
+              label={`Kreirano: ${task.createdAt ? dayjs(task.createdAt).format("DD-MM-YYYY HH:mm") : ""}`}
             />
           </Stack>
 
@@ -297,14 +297,14 @@ const TaskDetailsContainer = ({ task }: Props) => {
             rowGap={"1rem"}
             width={{ xs: "100%", md: "500px" }}
           >
-            <Typography variant="subtitle1">Assigned to:</Typography>
+            <Typography variant="subtitle1">Dodijeljeno:</Typography>
             <Select
               options={users}
               value={users.find((user) => user.value === assignedTo)}
               onChange={(selectedOption) =>
                 handleSaveAssignedTo(selectedOption?.value ?? "")
               }
-              placeholder={"Not assigned."}
+              placeholder={"Nije dodijeljeno."}
               isSearchable={true}
               isClearable={true}
               styles={{
@@ -316,14 +316,14 @@ const TaskDetailsContainer = ({ task }: Props) => {
               }}
             />
 
-            <Typography variant="subtitle1">On Taskboard:</Typography>
+            <Typography variant="subtitle1">Na radnoj ploči:</Typography>
             <Select
               options={boardsOptions}
               value={boardsOptions.find((board) => board.value === onBoard)}
               onChange={(selectedOption) =>
                 handleSaveOnBoard(selectedOption?.value ?? "")
               }
-              placeholder={"Not on any board."}
+              placeholder={"Nije na radnoj ploči."}
               isSearchable={true}
               isClearable={false}
               isDisabled={!isAdmin}
@@ -337,16 +337,9 @@ const TaskDetailsContainer = ({ task }: Props) => {
             />
           </Box>
 
-          <Stack
-            direction={"row"}
-            alignItems={"center"}
-            spacing={2}
-            mb={"2rem"}
-          ></Stack>
-
-          <Divider sx={{ my: "1rem" }} />
+          <Divider sx={{ my: "2rem" }} />
           <Typography variant="h6" gutterBottom>
-            Description
+            Opis
           </Typography>
           {!isEditingDescription && (
             <Paper
@@ -375,7 +368,7 @@ const TaskDetailsContainer = ({ task }: Props) => {
           )}
           {isEditingDescription && (
             <TextField
-              label="Task description"
+              label={"Opis zadatka"}
               value={taskDescription}
               aria-multiline={true}
               onChange={(e) => setTaskDescription(e.target.value)}
@@ -392,8 +385,8 @@ const TaskDetailsContainer = ({ task }: Props) => {
             />
           )}
 
-          <Typography variant="h6" gutterBottom mt={"1rem"}>
-            Change log
+          <Typography variant="h6" gutterBottom mt={"2rem"}>
+            Povijest promjena
           </Typography>
 
           <Stack spacing={2}>
@@ -408,7 +401,7 @@ const TaskDetailsContainer = ({ task }: Props) => {
                 variant={"text"}
                 onClick={() => setIsHistoryExpanded(!isHistoryExpanded)}
               >
-                {isHistoryExpanded ? "Show less" : "Show more"}
+                {isHistoryExpanded ? "Prikaži manje" : "Prikaži više"}
               </Button>
             )}
           </Stack>
@@ -419,9 +412,9 @@ const TaskDetailsContainer = ({ task }: Props) => {
                 variant={"contained"}
                 color={"error"}
                 onClick={() => setIsDeletePromptOpen(true)}
-                sx={{ mt: "1rem" }}
+                sx={{ mt: "2rem" }}
               >
-                Delete task
+                Izbriši zadatak
               </Button>
 
               <DeletePrompt

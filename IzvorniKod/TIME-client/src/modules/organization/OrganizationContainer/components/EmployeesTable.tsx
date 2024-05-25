@@ -11,22 +11,22 @@ import { useQueryClient } from "@tanstack/react-query";
 import { tenantGetUsersKey } from "@/api/reactQueryKeys/TenantEndpointKeys";
 
 const columns: GridColDef<UserDto>[] = [
-  { field: "firstName", headerName: "First Name", width: 150 },
-  { field: "lastName", headerName: "Last Name", width: 150 },
+  { field: "firstName", headerName: "Ime", width: 150 },
+  { field: "lastName", headerName: "Prezime", width: 150 },
   {
     field: "email",
-    headerName: "Email",
+    headerName: "E-mail",
     width: 150,
     valueGetter: (_, row) => row.email?.toLowerCase(),
   },
   {
     field: "userType",
-    headerName: "Role",
+    headerName: "Uloga korisnika",
     width: 150,
   },
   {
     field: "dateOfBirth",
-    headerName: "Date Of Birth",
+    headerName: "Datum rođenja",
     width: 150,
     valueGetter: (_, row) =>
       row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString() : "",

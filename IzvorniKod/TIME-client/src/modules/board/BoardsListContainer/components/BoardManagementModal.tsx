@@ -204,19 +204,19 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
       fullWidth={true}
     >
       <DialogTitle id="dialog-userManagment-prompt-title">
-        {board ? "Edit" : "Create new"} board
+        {board ? "Uredi radnu ploču" : "Kreiraj novu radnu ploču"}
       </DialogTitle>
       <DialogContent>
         <Stack direction={"column"} spacing={3} py={"1rem"} component={"form"}>
           <TextField
-            label={"Board name"}
+            label={"Ime radne ploče"}
             fullWidth
             type={"text"}
             value={boardName}
             onChange={(e) => setBoardName(e.target.value)}
           />
           <TextField
-            label={"Board description"}
+            label={"Opis radne ploče"}
             fullWidth
             type={"text"}
             value={boardDescription}
@@ -228,7 +228,7 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
             onChange={(selectedOptions) =>
               setBoardUsers(selectedOptions.map((option) => option.value))
             }
-            placeholder={"Assign to users"}
+            placeholder={"Dodaj korisnike u radnu ploču..."}
             isSearchable={true}
             isClearable={true}
             isMulti
@@ -249,7 +249,7 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
           onClick={handleClose}
           autoFocus
         >
-          Cancel
+          Poništi
         </Button>
         <LoadingButton
           variant={"contained"}
@@ -257,7 +257,7 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
           onClick={handleSave}
           loading={isLoading}
         >
-          Save
+          Spremi
         </LoadingButton>
       </DialogActions>
     </Dialog>

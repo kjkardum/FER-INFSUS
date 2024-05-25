@@ -94,8 +94,8 @@ const BoardsList = ({ boards }: BoardsListProps) => {
         open={!!anchorEl}
         onClose={menuClose}
       >
-        <MenuItem onClick={onOpenEditBoardPrompt}>Edit</MenuItem>
-        <MenuItem onClick={onOpenDeleteBoardPrompt}>Delete</MenuItem>
+        <MenuItem onClick={onOpenEditBoardPrompt}>Uredi</MenuItem>
+        <MenuItem onClick={onOpenDeleteBoardPrompt}>Izbriši</MenuItem>
       </Menu>
       {isAdmin && (
         <>

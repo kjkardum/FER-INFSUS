@@ -80,13 +80,13 @@ const DetailedBoardContainer = ({ boardId }: Props) => {
           href={"/boards"}
           style={{ textDecoration: "none", color: "inherit" }}
         >
-          <Typography color="inherit">Boards</Typography>
+          <Typography color="inherit">Radne Ploče</Typography>
         </Link>
         <Typography color="text.primary">{boardName}</Typography>
       </Breadcrumbs>
       {!editingBoardName && (
         <Box onClick={() => isAdmin && setEditingBoardName(true)}>
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             {data?.name}
           </Typography>
         </Box>
@@ -111,7 +111,7 @@ const DetailedBoardContainer = ({ boardId }: Props) => {
           onClick={() => isAdmin && setEditingBoardDescription(true)}
           zIndex={9999}
         >
-          <Typography variant="body2" gutterBottom>
+          <Typography variant="body1" gutterBottom>
             {data?.description}
           </Typography>
         </Box>

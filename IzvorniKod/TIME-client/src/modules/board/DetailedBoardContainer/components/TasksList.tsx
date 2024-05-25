@@ -122,17 +122,16 @@ const TasksList = ({ board }: Props) => {
         <Typography variant="h6" gutterBottom>
           Tasks
         </Typography>
-        {isAdmin && (
-          <Button
-            size={"small"}
-            variant="contained"
-            color="primary"
-            sx={{ ml: "0.5rem" }}
-            onClick={handleCreateTask}
-          >
-            Add Task
-          </Button>
-        )}
+
+        <Button
+          size={"small"}
+          variant="contained"
+          color="primary"
+          sx={{ ml: "0.5rem" }}
+          onClick={handleCreateTask}
+        >
+          Add Task
+        </Button>
       </Stack>
       {(!tasks || tasks.length === 0) && (
         <Typography variant="body1">No tasks found.</Typography>
@@ -195,11 +194,13 @@ const TasksList = ({ board }: Props) => {
                       )}
                       {!task.assignedUser && <Chip label={`Not assigned`} />}
                     </Stack>
-                    <IconButton
-                      onClick={(e) => handleOpenDeleteTaskModal(e, task.id)}
-                    >
-                      <Delete />
-                    </IconButton>
+                    {isAdmin && (
+                      <IconButton
+                        onClick={(e) => handleOpenDeleteTaskModal(e, task.id)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    )}
                   </Stack>
                 </HoverPaper>
               ))}
@@ -208,13 +209,11 @@ const TasksList = ({ board }: Props) => {
         </Accordion>
       ))}
 
-      {isAdmin && (
-        <CreateNewTask
-          open={openCreateTaskModal}
-          board={board}
-          onClose={handleCloseCreateTaskModal}
-        />
-      )}
+      <CreateNewTask
+        open={openCreateTaskModal}
+        board={board}
+        onClose={handleCloseCreateTaskModal}
+      />
 
       {isAdmin && (
         <DeletePrompt

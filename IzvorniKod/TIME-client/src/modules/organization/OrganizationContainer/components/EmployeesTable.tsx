@@ -5,6 +5,10 @@ import { UserDto } from "@/api/generated";
 import { Delete, Edit } from "@mui/icons-material";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
 import UserManagementModal from "@/modules/organization/OrganizationContainer/components/UserManagementModal";
+import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
+import useSnackbar from "@/hooks/useSnackbar";
+import { useQueryClient } from "@tanstack/react-query";
+import { tenantGetUsersKey } from "@/api/reactQueryKeys/TenantEndpointKeys";
 
 const columns: GridColDef<UserDto>[] = [
   { field: "firstName", headerName: "First Name", width: 150 },
@@ -39,10 +43,18 @@ const EmployeesTable = ({ rows }: Props) => {
   );
   const [deleteUser, setDeleteUser] = useState<UserDto | undefined>(undefined);
 
+  const { showSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+
   const handleDelete = () => {
-    if (deleteUser) {
-      // delete user
-    }
+    if (deleteUser && deleteUser.id)
+      tenantEndpoint
+        .apiTenantManagementDeleteUserIdDelete(deleteUser.id)
+        .then(() => {
+          showSnackbar("User deleted.", "success");
+          setDeleteUser(undefined);
+          queryClient.invalidateQueries({ queryKey: tenantGetUsersKey });
+        });
   };
 
   const handleCloseDelete = () => {

@@ -17,6 +17,7 @@ import useSnackbar from "@/hooks/useSnackbar";
 import Link from "next/link";
 import UsersList from "@/modules/board/DetailedBoardContainer/components/UsersList";
 import taskboardEndpoint from "@/api/endpoints/TaskboardEndpoint";
+import useAuthentication from "@/hooks/useAuthentication";
 
 interface Props {
   boardId: string;
@@ -33,8 +34,15 @@ const DetailedBoardContainer = ({ boardId }: Props) => {
   const { data, isError, isLoading, isSuccess, refetch } =
     useTaskboardGetDetails(boardId);
   const { showSnackbar } = useSnackbar();
+  const { isAdmin } = useAuthentication();
 
   const handleSaveEdited = () => {
+    if (boardName === data?.name && boardDescription === data?.description) {
+      setEditingBoardName(false);
+      setEditingBoardDescription(false);
+      return;
+    }
+
     taskboardEndpoint
       .apiTaskboardIdPut(boardId, {
         name: boardName,
@@ -77,7 +85,7 @@ const DetailedBoardContainer = ({ boardId }: Props) => {
         <Typography color="text.primary">{boardName}</Typography>
       </Breadcrumbs>
       {!editingBoardName && (
-        <Box onClick={() => setEditingBoardName(true)}>
+        <Box onClick={() => isAdmin && setEditingBoardName(true)}>
           <Typography variant="h5" gutterBottom>
             {data?.name}
           </Typography>
@@ -99,7 +107,10 @@ const DetailedBoardContainer = ({ boardId }: Props) => {
       )}
 
       {!editingBoardDescription && (
-        <Box onClick={() => setEditingBoardDescription(true)} zIndex={9999}>
+        <Box
+          onClick={() => isAdmin && setEditingBoardDescription(true)}
+          zIndex={9999}
+        >
           <Typography variant="body2" gutterBottom>
             {data?.description}
           </Typography>

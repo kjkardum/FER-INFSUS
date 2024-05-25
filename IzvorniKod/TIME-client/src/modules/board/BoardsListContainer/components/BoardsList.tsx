@@ -16,8 +16,6 @@ interface BoardsListProps {
 }
 
 const BoardsList = ({ boards }: BoardsListProps) => {
-  const { isAdmin } = useAuthentication();
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDeleteBoardPrompt, setOpenDeleteBoardPrompt] =
     useState<boolean>(false);
@@ -27,6 +25,7 @@ const BoardsList = ({ boards }: BoardsListProps) => {
     TaskboardSimpleDto | undefined
   >(undefined);
 
+  const { isAdmin } = useAuthentication();
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
 
@@ -98,17 +97,20 @@ const BoardsList = ({ boards }: BoardsListProps) => {
         <MenuItem onClick={onOpenEditBoardPrompt}>Edit</MenuItem>
         <MenuItem onClick={onOpenDeleteBoardPrompt}>Delete</MenuItem>
       </Menu>
-
-      <DeletePrompt
-        open={openDeleteBoardPrompt}
-        handleClose={() => setOpenDeleteBoardPrompt(false)}
-        handleConfirm={onDeleteBoard}
-      />
-      <BoardManagementModal
-        open={openEditBoardPrompt}
-        board={selectedBoard}
-        handleClose={onCloseEditBoardPrompt}
-      />
+      {isAdmin && (
+        <>
+          <DeletePrompt
+            open={openDeleteBoardPrompt}
+            handleClose={() => setOpenDeleteBoardPrompt(false)}
+            handleConfirm={onDeleteBoard}
+          />
+          <BoardManagementModal
+            open={openEditBoardPrompt}
+            board={selectedBoard}
+            handleClose={onCloseEditBoardPrompt}
+          />
+        </>
+      )}
     </>
   );
 };

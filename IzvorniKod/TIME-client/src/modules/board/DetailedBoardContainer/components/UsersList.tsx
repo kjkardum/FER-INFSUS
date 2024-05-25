@@ -76,49 +76,59 @@ const UsersList = ({ users, boardId }: Props) => {
           Users in board
         </Typography>
       </Stack>
-      <Select
-        options={usersOptions}
-        value={null}
-        onChange={(option) => {
-          if (!option) return;
-          handleAddUserToBoard(option.value);
-        }}
-        placeholder={"Add user to board..."}
-        isSearchable={true}
-        isClearable={true}
-        styles={{
-          control: (base) => ({
-            ...base,
-            height: "46px",
-            width: "100%",
-          }),
-        }}
-      />
+      {isAdmin && (
+        <Select
+          options={usersOptions}
+          value={null}
+          onChange={(option) => {
+            if (!option) return;
+            handleAddUserToBoard(option.value);
+          }}
+          placeholder={"Add user to board..."}
+          isSearchable={true}
+          isClearable={true}
+          styles={{
+            control: (base) => ({
+              ...base,
+              height: "46px",
+              width: "100%",
+            }),
+          }}
+        />
+      )}
       <Stack direction={"column"} spacing={2} mt={"1rem"}>
         {users.map((user) => (
           <Paper key={user.id} sx={{ p: "1rem" }}>
-            <Stack direction={"row"} alignItems={"center"} spacing={2}>
-              <Box pr={"1rem"}>
-                <IconButton onClick={() => setUserToUnassign(user)}>
-                  <Close />
-                </IconButton>
-              </Box>
+            <Stack direction={"row"} alignItems={"center"}>
+              {isAdmin && (
+                <Box pr={"1rem"}>
+                  <IconButton onClick={() => setUserToUnassign(user)}>
+                    <Close />
+                  </IconButton>
+                </Box>
+              )}
+
               {`${user.firstName} ${user.lastName} (${user.email?.toLowerCase()})`}
-              <Chip
-                variant={"filled"}
-                color={user.userType === "ADMIN" ? "error" : "default"}
-                label={user.userType}
-              />
+              <Box>
+                <Chip
+                  variant={"filled"}
+                  color={user.userType === "ADMIN" ? "error" : "default"}
+                  label={user.userType}
+                  sx={{ ml: "1rem" }}
+                />
+              </Box>
             </Stack>
           </Paper>
         ))}
       </Stack>
 
-      <DeletePrompt
-        open={!!userToUnassign}
-        handleClose={() => setUserToUnassign(null)}
-        handleConfirm={handleRemoveUserFromBoard}
-      />
+      {isAdmin && (
+        <DeletePrompt
+          open={!!userToUnassign}
+          handleClose={() => setUserToUnassign(null)}
+          handleConfirm={handleRemoveUserFromBoard}
+        />
+      )}
     </Box>
   );
 };

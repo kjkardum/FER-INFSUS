@@ -30,6 +30,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { taskItemGetTaskItemKey } from "@/api/reactQueryKeys/TaskItemEndpointKeys";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
 import { useRouter } from "next/navigation";
+import useAuthentication from "@/hooks/useAuthentication";
 
 interface Props {
   task: TaskItemDetailedDto;
@@ -79,6 +80,7 @@ const TaskDetailsContainer = ({ task }: Props) => {
   const { showSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { isAdmin } = useAuthentication();
 
   const users = useMemo(
     () => convertUserDataToSelectOptions(board?.taskboardUsers ?? []),
@@ -90,8 +92,13 @@ const TaskDetailsContainer = ({ task }: Props) => {
       allBoards?.map((board) => ({
         value: board.id ?? "",
         label: board.name ?? "",
-      })) ?? [],
-    [allBoards],
+      })) ?? [
+        {
+          value: board?.id ?? "",
+          label: board?.name ?? "",
+        },
+      ],
+    [allBoards, board],
   );
 
   const dateSortedHistoryLogs = useMemo(
@@ -319,6 +326,7 @@ const TaskDetailsContainer = ({ task }: Props) => {
               placeholder={"Not on any board."}
               isSearchable={true}
               isClearable={false}
+              isDisabled={!isAdmin}
               styles={{
                 control: (base) => ({
                   ...base,
@@ -404,30 +412,35 @@ const TaskDetailsContainer = ({ task }: Props) => {
               </Button>
             )}
           </Stack>
-          <Button
-            variant={"contained"}
-            color={"error"}
-            onClick={() => setIsDeletePromptOpen(true)}
-            sx={{ mt: "1rem" }}
-          >
-            Delete task
-          </Button>
 
-          <DeletePrompt
-            open={isDeletePromptOpen}
-            handleClose={() => setIsDeletePromptOpen(false)}
-            handleConfirm={() => {
-              TaskItemEndpoint.apiTaskItemIdDelete(task.id ?? "")
-                .then(() => {
-                  showSnackbar("Task deleted successfully.", "success");
-                  router.push(`/board/${task?.taskboardId}`);
-                  handleResetData();
-                })
-                .catch(() => {
-                  showSnackbar("Failed to delete task.", "error");
-                });
-            }}
-          />
+          {isAdmin && (
+            <>
+              <Button
+                variant={"contained"}
+                color={"error"}
+                onClick={() => setIsDeletePromptOpen(true)}
+                sx={{ mt: "1rem" }}
+              >
+                Delete task
+              </Button>
+
+              <DeletePrompt
+                open={isDeletePromptOpen}
+                handleClose={() => setIsDeletePromptOpen(false)}
+                handleConfirm={() => {
+                  TaskItemEndpoint.apiTaskItemIdDelete(task.id ?? "")
+                    .then(() => {
+                      showSnackbar("Task deleted successfully.", "success");
+                      router.push(`/board/${task?.taskboardId}`);
+                      handleResetData();
+                    })
+                    .catch(() => {
+                      showSnackbar("Failed to delete task.", "error");
+                    });
+                }}
+              />
+            </>
+          )}
         </Box>
       )}
     </>

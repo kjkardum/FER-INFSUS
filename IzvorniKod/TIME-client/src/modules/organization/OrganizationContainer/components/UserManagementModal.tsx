@@ -77,9 +77,46 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
     setDateOfBirth(date ?? dayjs());
   };
 
+  const handleEdit = () => {
+    if (!user || !user.id) return;
+
+    if (!firstName || !lastName || !email || !userRole || !dateOfBirth) {
+      showSnackbar("Please fill all fields", "error");
+      return;
+    }
+
+    setIsLoading(true);
+    tenantEndpoint
+      .apiTenantManagementUpdateUserIdPut(user?.id, {
+        firstName: firstName ?? "",
+        lastName: lastName ?? "",
+        dateOfBirth: dateOfBirth.toISOString(),
+        newPassword: password || null,
+      })
+      .then(() => {
+        showSnackbar("User updated successfully", "success");
+        queryClient
+          .invalidateQueries({ queryKey: tenantGetUsersKey })
+          .then(() => {
+            handleClose();
+          });
+      })
+      .catch(() => {
+        showSnackbar("Failed to update user", "error");
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   const handleSave = () => {
     if (!user) {
-      if (!firstName || !lastName || !email || !password || !userRole) {
+      if (
+        !firstName ||
+        !lastName ||
+        !email ||
+        !password ||
+        !userRole ||
+        !dateOfBirth
+      ) {
         showSnackbar("Please fill all fields", "error");
         return;
       }
@@ -92,6 +129,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
           email: email ?? "",
           password: password ?? "",
           userType: userRole === "admin" ? "ADMIN" : "USER",
+          dateOfBirth: dateOfBirth.toISOString(),
         })
         .then(() => {
           showSnackbar("User created successfully", "success");
@@ -106,6 +144,8 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
         })
         .finally(() => setIsLoading(false));
     }
+
+    handleEdit();
   };
 
   return (
@@ -141,20 +181,21 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
               value={lastName}
               onChange={(e) => handleStringChange(e, setLastName)}
             />
-            <TextField
-              label={"Email"}
-              fullWidth
-              type={"email"}
-              value={email}
-              onChange={(e) => handleStringChange(e, setEmail)}
-            />
+            {!user && (
+              <TextField
+                label={"Email"}
+                fullWidth
+                type={"email"}
+                value={email}
+                onChange={(e) => handleStringChange(e, setEmail)}
+              />
+            )}
             <TextField
               label={"Password"}
               fullWidth
               type={"password"}
               value={password}
               onChange={(e) => handleStringChange(e, setPassword)}
-              disabled={!!user}
             />
             <DatePicker
               label={"Date of birth"}

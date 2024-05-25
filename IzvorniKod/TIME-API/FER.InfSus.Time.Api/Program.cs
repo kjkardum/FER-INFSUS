@@ -7,6 +7,7 @@ using FER.InfSus.Time.Infrastructure;
 using FER.InfSus.Time.Infrastructure.Persistence;
 using FER.InfSus.Time.Infrastructure.Persistence.Seed;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,7 +50,9 @@ public partial class Program
         IConfiguration configuration,
         IWebHostEnvironment environment)
     {
-        services.AddControllers();
+        services
+            .AddControllers()
+            .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         services.AddEndpointsApiExplorer();
         services.AddLogging();
 

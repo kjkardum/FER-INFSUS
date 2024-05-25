@@ -2,6 +2,7 @@ using ApiExceptions.Exceptions;
 using AutoMapper;
 using FER.InfSus.Time.Application.Repositories;
 using FER.InfSus.Time.Application.UseCases.Taskboard.Dtos;
+using FER.InfSus.Time.Domain.Enums;
 using MediatR;
 
 namespace FER.InfSus.Time.Application.UseCases.Taskboard.Queries.GetById;
@@ -23,7 +24,8 @@ public class TaskboardGetByIdQueryHandler(
         {
             throw new ForbiddenAccessException("You don't have permission to get this taskboard");
         }
-        if (taskboard.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
+        if (requestor.UserType != UserType.ADMIN &&
+            taskboard.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
         {
             throw new ForbiddenAccessException("You don't have permission to get this taskboard");
         }

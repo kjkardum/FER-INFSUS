@@ -54,12 +54,15 @@ public class TaskboardRepository(ApplicationDbContext dbContext) : ITaskboardRep
 
     public async Task<ICollection<Taskboard>> GetBoardsByUserId(Guid userId) =>
         await dbContext.Taskboards
-            .Include(t => t.TaskboardUsers)
+            .Include(t => t.TaskboardUsers!)
+            .ThenInclude(t => t.User)
             .Where(b => b.TaskboardUsers!.Any(uta => uta.UserId == userId))
             .ToListAsync();
 
     public async Task<ICollection<Taskboard>> GetTenantBoards(Guid tenantId) =>
         await dbContext.Taskboards
+            .Include(t => t.TaskboardUsers!)
+            .ThenInclude(t => t.User)
             .Where(b => b.TenantId == tenantId)
             .ToListAsync();
 

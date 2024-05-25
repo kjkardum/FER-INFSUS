@@ -15,6 +15,11 @@ public class TaskboardProfile: Profile
                 opt => opt.MapFrom(d
                     => (d.TaskboardUsers ?? new List<UserTaskboardAssociation>()).Select(tu
                         => tu.User)));
-        CreateMap<Taskboard, TaskboardSimpleDto>();
+        CreateMap<Taskboard, TaskboardSimpleDto>()
+            .ForMember(
+                t => t.TaskboardUsers,
+                opt => opt.MapFrom(d
+                    => (d.TaskboardUsers ?? new List<UserTaskboardAssociation>()).Select(tu
+                        => tu.User)));
     }
 }

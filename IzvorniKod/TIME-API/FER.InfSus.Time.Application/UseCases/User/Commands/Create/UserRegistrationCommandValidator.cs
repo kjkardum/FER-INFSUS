@@ -8,6 +8,18 @@ public class UserRegistrationCommandValidator: AbstractValidator<UserRegistratio
     {
         RuleFor(t => t.Email)
             .EmailAddress();
+
+        RuleFor(x => x.FirstName)
+            .NotEmpty()
+            .MaximumLength(50);
+
+        RuleFor(x => x.LastName)
+            .NotEmpty()
+            .MaximumLength(50);
+
+        RuleFor(x => x.DateOfBirth)
+            .NotEmpty();
+
         RuleFor(t => t.Password)
             .MinimumLength(8)
             .MaximumLength(32);

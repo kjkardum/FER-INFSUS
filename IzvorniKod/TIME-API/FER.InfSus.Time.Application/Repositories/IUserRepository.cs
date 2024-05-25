@@ -21,4 +21,6 @@ public interface IUserRepository
 
     IQueryable<User> GetAsQueryable();
     Task<int> CountUsers();
+    Task Update(User user);
+    Task Delete(User user);
 }

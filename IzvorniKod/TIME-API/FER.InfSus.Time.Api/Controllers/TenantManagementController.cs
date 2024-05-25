@@ -2,6 +2,8 @@ using FER.InfSus.Time.Api.Services;
 using FER.InfSus.Time.Application.Request;
 using FER.InfSus.Time.Application.Response;
 using FER.InfSus.Time.Application.UseCases.User.Commands.Create;
+using FER.InfSus.Time.Application.UseCases.User.Commands.Delete;
+using FER.InfSus.Time.Application.UseCases.User.Commands.Update;
 using FER.InfSus.Time.Application.UseCases.User.Dto;
 using FER.InfSus.Time.Application.UseCases.User.Queries.GetPaginated;
 using MediatR;
@@ -45,5 +47,33 @@ public class TenantManagementController(
             cancellationToken);
 
         return Ok(paginatedUsers);
+    }
+
+    [HttpPut("updateUser/{id:guid}")]
+    public async Task<ActionResult> UpdateUser(
+        Guid id,
+        UserUpdateCommand request,
+        CancellationToken cancellationToken = default)
+    {
+        request.RequestorId = (Guid)authenticationService.GetUserId()!;
+        request.Id = id;
+
+        await mediator.Send(request, cancellationToken);
+        return Ok();
+    }
+
+    [HttpDelete("deleteUser/{id:guid}")]
+    public async Task<ActionResult> DeleteUser(
+        Guid id,
+        CancellationToken cancellationToken = default)
+    {
+        var request = new UserDeleteCommand
+        {
+            RequestorId = (Guid)authenticationService.GetUserId()!,
+            Id = id
+        };
+
+        await mediator.Send(request, cancellationToken);
+        return Ok();
     }
 }

@@ -74,6 +74,17 @@ public class UserRepository : IUserRepository
     public IQueryable<User> GetAsQueryable() => _dbContext.Users.AsQueryable();
 
     public Task<int> CountUsers() => _dbContext.Users.CountAsync();
+    public Task Update(User user)
+    {
+        _dbContext.Update(user);
+        return _dbContext.SaveChangesAsync();
+    }
+
+    public Task Delete(User user)
+    {
+        _dbContext.Remove(user);
+        return _dbContext.SaveChangesAsync();
+    }
 
     public async Task<User?> GetByEmail(string email)
         => await _dbContext.Users.SingleOrDefaultAsync(t => t.Email == email);

@@ -337,11 +337,11 @@ export interface TaskItemSimpleDto {
  */
 
 export const TaskItemState = {
-    NUMBER_0: 0,
-    NUMBER_1: 1,
-    NUMBER_2: 2,
-    NUMBER_3: 3,
-    NUMBER_4: 4
+    Novo: 'Novo',
+    Spreman: 'Spreman',
+    Aktivan: 'Aktivan',
+    Dovrsen: 'Dovrsen',
+    Prekinut: 'Prekinut'
 } as const;
 
 export type TaskItemState = typeof TaskItemState[keyof typeof TaskItemState];
@@ -465,6 +465,12 @@ export interface TaskboardSimpleDto {
      * @memberof TaskboardSimpleDto
      */
     'description': string | null;
+    /**
+     * 
+     * @type {Array<UserDto>}
+     * @memberof TaskboardSimpleDto
+     */
+    'taskboardUsers'?: Array<UserDto> | null;
 }
 /**
  * 
@@ -630,6 +636,12 @@ export interface UserRegistrationCommand {
     'lastName'?: string | null;
     /**
      * 
+     * @type {string}
+     * @memberof UserRegistrationCommand
+     */
+    'dateOfBirth'?: string;
+    /**
+     * 
      * @type {UserType}
      * @memberof UserRegistrationCommand
      */
@@ -656,13 +668,44 @@ export interface UserRegistrationCommand {
  */
 
 export const UserType = {
-    NUMBER_0: 0,
-    NUMBER_1: 1
+    User: 'USER',
+    Admin: 'ADMIN'
 } as const;
 
 export type UserType = typeof UserType[keyof typeof UserType];
 
 
+/**
+ * 
+ * @export
+ * @interface UserUpdateCommand
+ */
+export interface UserUpdateCommand {
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateCommand
+     */
+    'firstName'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateCommand
+     */
+    'lastName'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateCommand
+     */
+    'dateOfBirth'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof UserUpdateCommand
+     */
+    'newPassword'?: string | null;
+}
 
 /**
  * AuthenticationApi - axios parameter creator
@@ -2170,6 +2213,42 @@ export const TenantManagementApiAxiosParamCreator = function (configuration?: Co
         },
         /**
          * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTenantManagementDeleteUserIdDelete: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTenantManagementDeleteUserIdDelete', 'id', id)
+            const localVarPath = `/api/TenantManagement/deleteUser/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [filterBy] 
@@ -2220,6 +2299,46 @@ export const TenantManagementApiAxiosParamCreator = function (configuration?: Co
                 options: localVarRequestOptions,
             };
         },
+        /**
+         * 
+         * @param {string} id 
+         * @param {UserUpdateCommand} [userUpdateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTenantManagementUpdateUserIdPut: async (id: string, userUpdateCommand?: UserUpdateCommand, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('apiTenantManagementUpdateUserIdPut', 'id', id)
+            const localVarPath = `/api/TenantManagement/updateUser/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(userUpdateCommand, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
     }
 };
 
@@ -2244,6 +2363,18 @@ export const TenantManagementApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTenantManagementDeleteUserIdDelete(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTenantManagementDeleteUserIdDelete(id, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TenantManagementApi.apiTenantManagementDeleteUserIdDelete']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [filterBy] 
@@ -2255,6 +2386,19 @@ export const TenantManagementApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiTenantManagementGetUsersGet(page, pageSize, filterBy, orderBy, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TenantManagementApi.apiTenantManagementGetUsersGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {UserUpdateCommand} [userUpdateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTenantManagementUpdateUserIdPut(id: string, userUpdateCommand?: UserUpdateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTenantManagementUpdateUserIdPut(id, userUpdateCommand, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TenantManagementApi.apiTenantManagementUpdateUserIdPut']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -2278,6 +2422,15 @@ export const TenantManagementApiFactory = function (configuration?: Configuratio
         },
         /**
          * 
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTenantManagementDeleteUserIdDelete(id: string, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTenantManagementDeleteUserIdDelete(id, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
          * @param {number} [page] 
          * @param {number} [pageSize] 
          * @param {string} [filterBy] 
@@ -2287,6 +2440,16 @@ export const TenantManagementApiFactory = function (configuration?: Configuratio
          */
         apiTenantManagementGetUsersGet(page?: number, pageSize?: number, filterBy?: string, orderBy?: string, options?: any): AxiosPromise<UserDtoPaginatedResponse> {
             return localVarFp.apiTenantManagementGetUsersGet(page, pageSize, filterBy, orderBy, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {string} id 
+         * @param {UserUpdateCommand} [userUpdateCommand] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTenantManagementUpdateUserIdPut(id: string, userUpdateCommand?: UserUpdateCommand, options?: any): AxiosPromise<void> {
+            return localVarFp.apiTenantManagementUpdateUserIdPut(id, userUpdateCommand, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -2311,6 +2474,17 @@ export class TenantManagementApi extends BaseAPI {
 
     /**
      * 
+     * @param {string} id 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TenantManagementApi
+     */
+    public apiTenantManagementDeleteUserIdDelete(id: string, options?: RawAxiosRequestConfig) {
+        return TenantManagementApiFp(this.configuration).apiTenantManagementDeleteUserIdDelete(id, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
      * @param {number} [page] 
      * @param {number} [pageSize] 
      * @param {string} [filterBy] 
@@ -2321,6 +2495,18 @@ export class TenantManagementApi extends BaseAPI {
      */
     public apiTenantManagementGetUsersGet(page?: number, pageSize?: number, filterBy?: string, orderBy?: string, options?: RawAxiosRequestConfig) {
         return TenantManagementApiFp(this.configuration).apiTenantManagementGetUsersGet(page, pageSize, filterBy, orderBy, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {string} id 
+     * @param {UserUpdateCommand} [userUpdateCommand] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TenantManagementApi
+     */
+    public apiTenantManagementUpdateUserIdPut(id: string, userUpdateCommand?: UserUpdateCommand, options?: RawAxiosRequestConfig) {
+        return TenantManagementApiFp(this.configuration).apiTenantManagementUpdateUserIdPut(id, userUpdateCommand, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Button,
   Dialog,
@@ -15,6 +15,9 @@ import taskboardEndpoint from "@/api/endpoints/TaskboardEndpoint";
 import { taskboardGetAllBoardsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
 import { TaskboardSimpleDto } from "@/api/generated";
 import useSnackbar from "@/hooks/useSnackbar";
+import Select from "react-select";
+import useTenantGetUsers from "@/api/hooks/TenantEndpoint/useTenantGetUsers";
+import convertUserDataToSelectOptions from "@/utils/convertUserDataToSelectOptions";
 
 interface Props {
   open?: boolean;
@@ -27,17 +30,29 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
   const [boardDescription, setBoardDescription] = useState<string>(
     board?.description ?? "",
   );
+  const [boardUsers, setBoardUsers] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
+  const { data: usersData } = useTenantGetUsers();
+
+  const users = useMemo(
+    () => convertUserDataToSelectOptions(usersData?.data ?? []),
+    [usersData],
+  );
 
   useEffect(() => {
     if (board) {
       setBoardName(board.name ?? "");
       setBoardDescription(board.description ?? "");
+      setBoardUsers(board.taskboardUsers?.map((user) => user.id ?? "") ?? []);
+    } else {
+      setBoardName("");
+      setBoardDescription("");
+      setBoardUsers([]);
     }
-  }, [board]);
+  }, [board, open]);
 
   const handleCreateNewBoard = () => {
     if (!boardName || !boardDescription) {
@@ -51,8 +66,38 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
         name: boardName,
         description: boardDescription,
       })
-      .then(() => {
+      .then((response) => {
         showSnackbar("Board saved successfully.", "success");
+        try {
+          if (boardUsers.length) {
+            boardUsers
+              .map((userId) => ({
+                userId,
+                taskboardId: response.data.id,
+              }))
+              .forEach(async (user, index) => {
+                await taskboardEndpoint.apiTaskboardAssignPost(user);
+                if (index === boardUsers.length - 1)
+                  queryClient
+                    .invalidateQueries({
+                      queryKey: taskboardGetAllBoardsKey,
+                    })
+                    .then(() => {
+                      handleClose();
+                    });
+              });
+
+            queryClient
+              .invalidateQueries({ queryKey: taskboardGetAllBoardsKey })
+              .then(() => {
+                handleClose();
+              });
+            return;
+          }
+        } catch (e) {
+          showSnackbar("Failed to save board.", "error");
+        }
+
         queryClient
           .invalidateQueries({ queryKey: taskboardGetAllBoardsKey })
           .then(() => {
@@ -81,6 +126,52 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
       })
       .then(() => {
         showSnackbar("Board saved successfully.", "success");
+
+        const currentBoardUsers =
+          board.taskboardUsers?.map((user) => user.id) ?? [];
+
+        const usersToAdd = boardUsers.filter(
+          (userId) => !currentBoardUsers.includes(userId),
+        );
+
+        const usersToRemove = currentBoardUsers.filter(
+          (userId) => userId && !boardUsers.includes(userId),
+        );
+
+        if (usersToAdd.length)
+          usersToAdd
+            .map((userId) => ({
+              userId,
+              taskboardId: board.id,
+            }))
+            .forEach(async (user, index) => {
+              await taskboardEndpoint.apiTaskboardAssignPost(user);
+              if (index === usersToAdd.length - 1)
+                queryClient
+                  .invalidateQueries({
+                    queryKey: taskboardGetAllBoardsKey,
+                  })
+                  .then(() => {
+                    handleClose();
+                  });
+            });
+
+        if (usersToRemove.length)
+          usersToRemove.forEach(async (userId, index) => {
+            await taskboardEndpoint.apiTaskboardUnassignPost({
+              userId,
+              taskboardId: board.id,
+            });
+            if (index === usersToRemove.length - 1)
+              queryClient
+                .invalidateQueries({
+                  queryKey: taskboardGetAllBoardsKey,
+                })
+                .then(() => {
+                  handleClose();
+                });
+          });
+
         queryClient
           .invalidateQueries({ queryKey: taskboardGetAllBoardsKey })
           .then(() => {
@@ -130,6 +221,24 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
             type={"text"}
             value={boardDescription}
             onChange={(e) => setBoardDescription(e.target.value)}
+          />
+          <Select
+            options={users}
+            value={users.filter((user) => boardUsers.includes(user.value))}
+            onChange={(selectedOptions) =>
+              setBoardUsers(selectedOptions.map((option) => option.value))
+            }
+            placeholder={"Assign to users"}
+            isSearchable={true}
+            isClearable={true}
+            isMulti
+            menuPosition={"fixed"}
+            styles={{
+              control: (base) => ({
+                ...base,
+                minHeight: "56px",
+              }),
+            }}
           />
         </Stack>
       </DialogContent>

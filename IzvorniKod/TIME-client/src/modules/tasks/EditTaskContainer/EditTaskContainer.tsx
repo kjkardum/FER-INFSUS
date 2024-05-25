@@ -29,7 +29,7 @@ interface Props {
 const EditTaskContainer = ({ taskId }: Props) => {
   const [taskName, setTaskName] = useState<string>("");
   const [taskDescription, setTaskDescription] = useState<string>("");
-  const [taskState, setTaskState] = useState<number>(0);
+  const [taskState, setTaskState] = useState<TaskItemState>("Novo");
   const [assignedTo, setAssignedTo] = useState<string>("");
   const [isDeletePromptOpen, setIsDeletePromptOpen] = useState<boolean>(false);
   const [editIsLoading, setEditIsLoading] = useState<boolean>(false);
@@ -50,7 +50,7 @@ const EditTaskContainer = ({ taskId }: Props) => {
   );
 
   const handleStateChange = (state: ChangeEvent<HTMLInputElement>) => {
-    setTaskState(Number(state.target.value));
+    setTaskState(state.target.value as TaskItemState);
   };
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +110,7 @@ const EditTaskContainer = ({ taskId }: Props) => {
 
       if (assignedToIsDifferent)
         await taskItemEndpoint.apiTaskItemIdAssignPost(taskId, {
-          assignedUserId: assignedTo ?? "",
+          assignedUserId: assignedTo || null,
         });
 
       showSuccessMessageAndRedirect();
@@ -143,7 +143,7 @@ const EditTaskContainer = ({ taskId }: Props) => {
     if (isSuccess && task) {
       setTaskName(task.name ?? "");
       setTaskDescription(task.description ?? "");
-      setTaskState(task.state ?? 0);
+      setTaskState(task.state ?? "Novo");
       setAssignedTo(task.assignedUserId ?? "");
     }
   }, [isSuccess, task]);

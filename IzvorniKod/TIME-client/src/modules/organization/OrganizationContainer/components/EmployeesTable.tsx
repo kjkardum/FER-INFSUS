@@ -2,7 +2,6 @@
 import React, { useMemo, useState } from "react";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { UserDto } from "@/api/generated";
-import getRoleFromUserType from "@/utils/getRoleFromUserType";
 import { Delete, Edit } from "@mui/icons-material";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
 import UserManagementModal from "@/modules/organization/OrganizationContainer/components/UserManagementModal";
@@ -20,7 +19,6 @@ const columns: GridColDef<UserDto>[] = [
     field: "userType",
     headerName: "Role",
     width: 150,
-    valueGetter: (_, row) => getRoleFromUserType(row.userType ?? 0),
   },
   {
     field: "dateOfBirth",

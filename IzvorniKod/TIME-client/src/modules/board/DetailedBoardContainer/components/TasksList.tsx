@@ -13,11 +13,14 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { Delete, Edit, ExpandMore } from "@mui/icons-material";
-import { TaskItemSimpleDto } from "@/api/generated";
+import { Delete, ExpandMore } from "@mui/icons-material";
+import {
+  TaskboardDetailedDto,
+  TaskItemSimpleDto,
+  TaskItemState,
+} from "@/api/generated";
 import useAuthentication from "@/hooks/useAuthentication";
 import CreateNewTask from "@/modules/board/DetailedBoardContainer/components/CreateNewTask";
-import getTaskStateFromStateNumber from "@/utils/getTaskStateFromStateNumber";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
@@ -25,41 +28,18 @@ import taskItemEndpoint from "@/api/endpoints/TaskItemEndpoint";
 import { useQueryClient } from "@tanstack/react-query";
 import { taskboardGetBoardDetailsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
 import useSnackbar from "@/hooks/useSnackbar";
+import getColorFromTaskStatus from "@/utils/getColorFromTaskStatus";
 
 const groupTasksByStatus = (tasks: TaskItemSimpleDto[]) => {
-  return tasks.reduce(
-    (acc, task) => {
-      if (task?.state === undefined) {
-        return acc;
-      }
+  const states = Object.keys(TaskItemState);
+  const groups: { [key: string]: TaskItemSimpleDto[] } = {};
 
-      if (!acc[task.state]) {
-        acc[task.state] = [];
-      }
+  states.forEach((state) => {
+    const tasksInState = tasks.filter((task) => task.state === state);
+    if (tasksInState.length) groups[state] = tasksInState;
+  });
 
-      acc[task.state].push(task);
-
-      return acc;
-    },
-    {} as Record<string, TaskItemSimpleDto[]>,
-  );
-};
-
-const statusToColor = (status: number) => {
-  switch (status) {
-    case 0:
-      return "primary";
-    case 1:
-      return "secondary";
-    case 2:
-      return "info";
-    case 3:
-      return "success";
-    case 4:
-      return "error";
-    default:
-      return "default";
-  }
+  return groups;
 };
 
 const HoverPaper = styled(Paper)(({ theme }) => ({
@@ -70,11 +50,13 @@ const HoverPaper = styled(Paper)(({ theme }) => ({
 }));
 
 interface Props {
-  tasks?: TaskItemSimpleDto[];
-  boardId: string;
+  board: TaskboardDetailedDto;
 }
 
-const TasksList = ({ tasks, boardId }: Props) => {
+const TasksList = ({ board }: Props) => {
+  const tasks = board.taskItems ?? [];
+  const boardId = board.id ?? "";
+
   const [openCreateTaskModal, setOpenCreateTaskModal] =
     useState<boolean>(false);
   const [deleteTaskId, setDeleteTaskId] = useState<string | undefined>(
@@ -86,7 +68,6 @@ const TasksList = ({ tasks, boardId }: Props) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const groupedTasks = groupTasksByStatus(tasks ?? []);
-  const groupedTasksKeys = Object.keys(groupedTasks).sort();
 
   const handleCreateTask = () => {
     setOpenCreateTaskModal(true);
@@ -94,17 +75,6 @@ const TasksList = ({ tasks, boardId }: Props) => {
 
   const handleCloseCreateTaskModal = () => {
     setOpenCreateTaskModal(false);
-  };
-
-  const handleEditTask = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    taskId?: string,
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!taskId) return;
-
-    router.push(`/task/${taskId}/edit`);
   };
 
   const handleTaskClick = (taskId?: string) => {
@@ -164,7 +134,10 @@ const TasksList = ({ tasks, boardId }: Props) => {
           </Button>
         )}
       </Stack>
-      {groupedTasksKeys.map((key) => (
+      {(!tasks || tasks.length === 0) && (
+        <Typography variant="body1">No tasks found.</Typography>
+      )}
+      {Object.keys(groupedTasks).map((key) => (
         <Accordion key={`${key}_${groupedTasks[key].length}`} defaultExpanded>
           <AccordionSummary
             expandIcon={<ExpandMore />}
@@ -176,11 +149,9 @@ const TasksList = ({ tasks, boardId }: Props) => {
                 sx={{ mr: "0.5rem" }}
                 size={"small"}
                 label={`${groupedTasks[key]?.length || 0} tasks`}
-                color={statusToColor(Number(key))}
+                color={getColorFromTaskStatus(key as TaskItemState)}
               />
-              <Typography variant="subtitle1">
-                {getTaskStateFromStateNumber(Number(key))}
-              </Typography>
+              <Typography variant="subtitle1">{key}</Typography>
             </Stack>
           </AccordionSummary>
           <AccordionDetails>
@@ -224,9 +195,6 @@ const TasksList = ({ tasks, boardId }: Props) => {
                       )}
                       {!task.assignedUser && <Chip label={`Not assigned`} />}
                     </Stack>
-                    <IconButton onClick={(e) => handleEditTask(e, task.id)}>
-                      <Edit />
-                    </IconButton>
                     <IconButton
                       onClick={(e) => handleOpenDeleteTaskModal(e, task.id)}
                     >
@@ -243,7 +211,7 @@ const TasksList = ({ tasks, boardId }: Props) => {
       {isAdmin && (
         <CreateNewTask
           open={openCreateTaskModal}
-          boardId={boardId}
+          board={board}
           onClose={handleCloseCreateTaskModal}
         />
       )}

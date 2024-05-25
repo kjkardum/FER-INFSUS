@@ -23,8 +23,6 @@ const BoardsListContainer = () => {
     isSuccess: isSuccessMyBoards,
   } = useTaskboardGetAssignedBoards(isAdmin);
 
-  // TODO: check potential caching issues
-
   const filteredData = useMemo(
     () =>
       (allBoards || myBoards)?.filter(

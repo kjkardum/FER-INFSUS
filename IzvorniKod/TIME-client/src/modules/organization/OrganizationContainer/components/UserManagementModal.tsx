@@ -23,7 +23,6 @@ import React, {
 import { UserDto } from "@/api/generated";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import getRoleFromUserType from "@/utils/getRoleFromUserType";
 import dayjs from "dayjs";
 import { LoadingButton } from "@mui/lab";
 import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
@@ -49,7 +48,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
     user?.dateOfBirth ? dayjs(user.dateOfBirth) : dayjs(),
   );
   const [userRole, setUserRole] = useState<string | undefined>(
-    user ? getRoleFromUserType(user.userType ?? 0).toLowerCase() : "user",
+    user ? (user.userType ?? "USER").toLowerCase() : "user",
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -57,9 +56,9 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
     if (user) {
       setFirstName(user.firstName ?? "");
       setLastName(user.lastName ?? "");
-      setEmail(user.email ?? "");
+      setEmail(user.email?.toLowerCase() ?? "");
       setDateOfBirth(user.dateOfBirth ? dayjs(user.dateOfBirth) : dayjs());
-      setUserRole(getRoleFromUserType(user.userType ?? 0).toLowerCase());
+      setUserRole((user.userType ?? "USER").toLowerCase());
     }
   }, [user]);
 
@@ -92,7 +91,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
           lastName: lastName ?? "",
           email: email ?? "",
           password: password ?? "",
-          userType: userRole === "admin" ? 1 : 0,
+          userType: userRole === "admin" ? "ADMIN" : "USER",
         })
         .then(() => {
           showSnackbar("User created successfully", "success");

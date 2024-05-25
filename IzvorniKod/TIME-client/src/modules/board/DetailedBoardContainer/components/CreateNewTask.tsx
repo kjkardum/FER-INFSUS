@@ -12,39 +12,39 @@ import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import taskItemEndpoint from "@/api/endpoints/TaskItemEndpoint";
 import { useQueryClient } from "@tanstack/react-query";
 import { taskboardGetBoardDetailsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
-import useTenantGetUsers from "@/api/hooks/TenantEndpoint/useTenantGetUsers";
 import Select from "react-select";
-import { TaskItemState } from "@/api/generated";
+import { TaskboardDetailedDto, TaskItemState } from "@/api/generated";
 import useSnackbar from "@/hooks/useSnackbar";
 import TaskStateSelector from "@/components/TaskStateSelector/TaskStateSelector";
 import convertUserDataToSelectOptions from "@/utils/convertUserDataToSelectOptions";
 
 interface Props {
   open?: boolean;
-  boardId: string;
+  board: TaskboardDetailedDto;
   onClose: () => void;
 }
 
-const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
+const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
+  const boardId = board.id ?? "";
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
   const [taskDescription, setTaskDescription] = useState<string>("");
-  const [taskState, setTaskState] = useState<number>(0);
+  const [taskState, setTaskState] = useState<TaskItemState>("Novo");
   const [assignedTo, setAssignedTo] = useState<string>("");
 
   const queryClient = useQueryClient();
-  const { data: usersData } = useTenantGetUsers();
   const { showSnackbar } = useSnackbar();
 
   const users = useMemo(
-    () => convertUserDataToSelectOptions(usersData?.data ?? []),
-    [usersData],
+    () => convertUserDataToSelectOptions(board.taskboardUsers ?? []),
+    [board.taskboardUsers],
   );
 
   useEffect(() => {
     setTaskName("");
     setTaskDescription("");
-    setTaskState(0);
+    setTaskState("Novo");
     setAssignedTo("");
   }, [open]);
 
@@ -69,7 +69,7 @@ const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
           })
           .then(() => onClose());
 
-        if (taskState !== 0) {
+        if (taskState !== "Novo") {
           taskItemEndpoint
             .apiTaskItemIdChangeStatePost(response.data.id ?? "", {
               newState: taskState as TaskItemState,
@@ -108,7 +108,7 @@ const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
   };
 
   const handleStateChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTaskState(Number(event.target.value));
+    setTaskState(event.target.value as TaskItemState);
   };
 
   return (

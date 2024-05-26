@@ -90,9 +90,10 @@ public class TaskItemChangeStateCommandHandlerTests
         // Arrange
         var cancellationToken = default(CancellationToken);
         var request = AutoFaker.Generate<TaskItemChangeStateCommand>();
+        request.NewState = TaskItemState.Dovršen;
         var requestor = new Faker<Domain.Entities.User>()
             .RuleFor(u => u.Id, f => f.Random.Guid())
-            .RuleFor(u => u.TenantId, f => f.Random.Guid())
+            .RuleFor(u => u.TenantId, Guid.NewGuid())
             .Generate();
         var taskItem = new Faker<Domain.Entities.TaskItem>()
             .RuleFor(t => t.Id, request.Id)
@@ -123,7 +124,7 @@ public class TaskItemChangeStateCommandHandlerTests
         var cancellationToken = default(CancellationToken);
         var request = AutoFaker.Generate<TaskItemChangeStateCommand>();
         var requestor = new Faker<Domain.Entities.User>()
-            .RuleFor(u => u.Id, f => f.Random.Guid())
+            .RuleFor(u => u.Id, Guid.NewGuid())
             .RuleFor(u => u.UserType, _ => UserType.USER)
             .RuleFor(u => u.TenantId, f => f.Random.Guid())
             .Generate();

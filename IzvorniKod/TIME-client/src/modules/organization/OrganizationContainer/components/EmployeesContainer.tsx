@@ -84,7 +84,7 @@ const EmployeesContainer = () => {
 
   return (
     <>
-      <Typography variant={"h5"} gutterBottom>
+      <Typography variant={"h4"} gutterBottom>
         Zaposlenici
         <IconButton sx={{ ml: "0.5rem" }} onClick={handleCreateUser}>
           <AddCircle />

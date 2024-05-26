@@ -8,7 +8,6 @@ const OrganizationContainer = () => {
     <Box
       sx={{
         height: 815,
-        padding: "1rem",
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",

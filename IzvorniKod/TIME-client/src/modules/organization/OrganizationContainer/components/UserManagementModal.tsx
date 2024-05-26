@@ -90,7 +90,13 @@ const UserManagementModal = ({
   };
 
   const handleDateChange = (date: dayjs.Dayjs | null) => {
-    setDateOfBirth(date ?? dayjs());
+    if (!date) return;
+    const dateWithTimeAtNoon = date
+      ?.hour(12)
+      .minute(0)
+      .second(0)
+      .millisecond(0);
+    setDateOfBirth(dateWithTimeAtNoon ?? dayjs());
   };
 
   const handleEdit = () => {

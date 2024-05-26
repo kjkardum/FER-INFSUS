@@ -9,7 +9,8 @@ const useTenantGetUsers = (disabled?: boolean) => {
 
   return useQuery({
     queryKey: tenantGetUsersKey,
-    queryFn: async () => await tenantEndpoint.apiTenantManagementGetUsersGet(),
+    queryFn: async () =>
+      await tenantEndpoint.apiTenantManagementGetUsersGet(1, 100),
     select: (data) => data.data,
     enabled: !disabled && isAdmin,
   });

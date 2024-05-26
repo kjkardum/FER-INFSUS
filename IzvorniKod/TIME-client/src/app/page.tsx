@@ -38,7 +38,10 @@ export default function Home() {
           </Paper>
         </Grid>
       </Grid>
-      <Paper sx={{ padding: "1rem", height: "450px" }} elevation={1}>
+      <Paper
+        sx={{ padding: "1rem", height: "450px", overflow: "auto" }}
+        elevation={1}
+      >
         <SimpleTasksContainer />
       </Paper>
     </AppLayout>

@@ -37,9 +37,15 @@ interface Props {
   user?: UserDto;
   open?: boolean;
   handleClose: () => void;
+  handleUpdate?: () => void;
 }
 
-const UserManagementModal = ({ open, user, handleClose }: Props) => {
+const UserManagementModal = ({
+  open,
+  user,
+  handleClose,
+  handleUpdate,
+}: Props) => {
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
 
@@ -62,8 +68,15 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
       setEmail(user.email?.toLowerCase() ?? "");
       setDateOfBirth(user.dateOfBirth ? dayjs(user.dateOfBirth) : dayjs());
       setUserRole((user.userType ?? "USER").toLowerCase());
+    } else {
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setDateOfBirth(dayjs());
+      setUserRole("user");
+      setPassword("");
     }
-  }, [user]);
+  }, [user, open]);
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserRole((event.target as HTMLInputElement).value);
@@ -95,12 +108,17 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
         lastName: lastName ?? "",
         dateOfBirth: dateOfBirth.toISOString(),
         newPassword: password || null,
+        userType: userRole === "admin" ? "ADMIN" : "USER",
       })
       .then(() => {
         showSnackbar(
           SnackbarMessages.organization.employees.updateSuccess,
           "success",
         );
+        if (handleUpdate) {
+          handleUpdate();
+          return;
+        }
         queryClient
           .invalidateQueries({ queryKey: tenantGetUsersKey })
           .then(() => {
@@ -108,6 +126,14 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
           });
       })
       .catch((error: AxiosError<ErrorResponseType>) => {
+        if (error.status === 400) {
+          showSnackbar(
+            SnackbarMessages.organization.employees.invalidEntry,
+            "error",
+          );
+          return;
+        }
+
         showSnackbar(
           error.response?.data.detail ||
             SnackbarMessages.organization.employees.updateError,
@@ -146,6 +172,11 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             SnackbarMessages.organization.employees.createSuccess,
             "success",
           );
+          if (handleUpdate) {
+            handleUpdate();
+            return;
+          }
+
           queryClient
             .invalidateQueries({ queryKey: tenantGetUsersKey })
             .then(() => {

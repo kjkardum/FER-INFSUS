@@ -2,6 +2,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
   Button,
+  debounce,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,12 +16,12 @@ import taskboardEndpoint from "@/api/endpoints/TaskboardEndpoint";
 import { taskboardGetAllBoardsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
 import { TaskboardSimpleDto } from "@/api/generated";
 import useSnackbar from "@/hooks/useSnackbar";
-import Select from "react-select";
-import useTenantGetUsers from "@/api/hooks/TenantEndpoint/useTenantGetUsers";
 import convertUserDataToSelectOptions from "@/utils/convertUserDataToSelectOptions";
 import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
 import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
 import { AxiosError } from "axios";
+import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
+import AsyncSelect from "react-select/async";
 
 interface Props {
   open?: boolean;
@@ -33,23 +34,19 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
   const [boardDescription, setBoardDescription] = useState<string>(
     board?.description ?? "",
   );
-  const [boardUsers, setBoardUsers] = useState<string[]>([]);
+  const [boardUsers, setBoardUsers] = useState<
+    { value: string; label: string }[]
+  >([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
-  const { data: usersData } = useTenantGetUsers();
-
-  const users = useMemo(
-    () => convertUserDataToSelectOptions(usersData?.data ?? []),
-    [usersData],
-  );
 
   useEffect(() => {
     if (board) {
       setBoardName(board.name ?? "");
       setBoardDescription(board.description ?? "");
-      setBoardUsers(board.taskboardUsers?.map((user) => user.id ?? "") ?? []);
+      setBoardUsers(convertUserDataToSelectOptions(board.taskboardUsers ?? []));
     } else {
       setBoardName("");
       setBoardDescription("");
@@ -74,8 +71,8 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
         try {
           if (boardUsers.length) {
             boardUsers
-              .map((userId) => ({
-                userId,
+              .map((user) => ({
+                userId: user.value,
                 taskboardId: response.data.id,
               }))
               .forEach(async (user, index) => {
@@ -135,13 +132,14 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
 
         const currentBoardUsers =
           board.taskboardUsers?.map((user) => user.id) ?? [];
+        const newBoardUsers = boardUsers.map((user) => user.value);
 
-        const usersToAdd = boardUsers.filter(
+        const usersToAdd = newBoardUsers.filter(
           (userId) => !currentBoardUsers.includes(userId),
         );
 
         const usersToRemove = currentBoardUsers.filter(
-          (userId) => userId && !boardUsers.includes(userId),
+          (userId) => userId && !newBoardUsers.includes(userId),
         );
 
         try {
@@ -208,6 +206,19 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
     handleEditBoard();
   };
 
+  const debouncedLoadOptions = useMemo(() => {
+    return debounce(
+      (inputValue: string, callback: (options: typeof boardUsers) => void) => {
+        tenantEndpoint
+          .apiTenantManagementGetUsersGet(1, 100, inputValue)
+          .then((response) => {
+            callback(convertUserDataToSelectOptions(response.data.data ?? []));
+          });
+      },
+      300,
+    );
+  }, []);
+
   return (
     <Dialog
       open={!!open}
@@ -235,11 +246,15 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
             value={boardDescription}
             onChange={(e) => setBoardDescription(e.target.value)}
           />
-          <Select
-            options={users}
-            value={users.filter((user) => boardUsers.includes(user.value))}
+          <AsyncSelect
+            cacheOptions
+            defaultOptions
+            loadOptions={debouncedLoadOptions}
+            value={boardUsers}
             onChange={(selectedOptions) =>
-              setBoardUsers(selectedOptions.map((option) => option.value))
+              setBoardUsers(
+                selectedOptions as { value: string; label: string }[],
+              )
             }
             placeholder={"Dodaj korisnike u radnu ploču..."}
             isSearchable={true}

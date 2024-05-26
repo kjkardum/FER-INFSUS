@@ -647,6 +647,38 @@
         }
       }
     },
+    "/api/TaskItem/assigned": {
+      "get": {
+        "tags": [
+          "TaskItem"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TaskItemForTasklistDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TaskItem": {
       "post": {
         "tags": [
@@ -667,7 +699,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TaskItemDetailedDto"
+                  "$ref": "#/components/schemas/TaskItemSimpleDto"
                 }
               }
             }
@@ -1370,6 +1402,52 @@
         },
         "additionalProperties": false
       },
+      "TaskItemForTasklistDto": {
+        "required": [
+          "description",
+          "name",
+          "taskboardName"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "$ref": "#/components/schemas/TaskItemState"
+          },
+          "taskboardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskboardName": {
+            "type": "string",
+            "nullable": true
+          },
+          "assignedUserId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "assignedUser": {
+            "$ref": "#/components/schemas/UserDto"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
       "TaskItemHistoryLogDto": {
         "required": [
           "changelog",
@@ -1447,7 +1525,7 @@
           "Novo",
           "Spreman",
           "Aktivan",
-          "Dovrsen",
+          "Dovršen",
           "Prekinut"
         ],
         "type": "string"
@@ -1725,6 +1803,9 @@
           "newPassword": {
             "type": "string",
             "nullable": true
+          },
+          "userType": {
+            "$ref": "#/components/schemas/UserType"
           }
         },
         "additionalProperties": false

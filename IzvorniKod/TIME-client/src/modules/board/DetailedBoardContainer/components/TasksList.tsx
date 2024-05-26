@@ -29,6 +29,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { taskboardGetBoardDetailsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
 import useSnackbar from "@/hooks/useSnackbar";
 import getColorFromTaskStatus from "@/utils/getColorFromTaskStatus";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { AxiosError } from "axios";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
 
 const groupTasksByStatus = (tasks: TaskItemSimpleDto[]) => {
   const states = Object.keys(TaskItemState);
@@ -100,13 +103,16 @@ const TasksList = ({ board }: Props) => {
     taskItemEndpoint
       .apiTaskItemIdDelete(deleteTaskId)
       .then(() => {
-        showSnackbar("Task deleted successfully.", "success");
+        showSnackbar(SnackbarMessages.tasks.deleteSuccess, "success");
         queryClient.invalidateQueries({
           queryKey: taskboardGetBoardDetailsKey(boardId),
         });
       })
-      .catch(() => {
-        showSnackbar("Failed to delete task.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail || SnackbarMessages.tasks.deleteError,
+          "error",
+        );
       })
       .finally(() => setDeleteTaskId(undefined));
   };

@@ -29,6 +29,9 @@ import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
 import { useQueryClient } from "@tanstack/react-query";
 import { tenantGetUsersKey } from "@/api/reactQueryKeys/TenantEndpointKeys";
 import useSnackbar from "@/hooks/useSnackbar";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
+import { AxiosError } from "axios";
 
 interface Props {
   user?: UserDto;
@@ -81,7 +84,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
     if (!user || !user.id) return;
 
     if (!firstName || !lastName || !email || !userRole || !dateOfBirth) {
-      showSnackbar("Please fill all fields", "error");
+      showSnackbar(SnackbarMessages.common.fillAllFields, "error");
       return;
     }
 
@@ -94,15 +97,22 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
         newPassword: password || null,
       })
       .then(() => {
-        showSnackbar("User updated successfully", "success");
+        showSnackbar(
+          SnackbarMessages.organization.employees.updateSuccess,
+          "success",
+        );
         queryClient
           .invalidateQueries({ queryKey: tenantGetUsersKey })
           .then(() => {
             handleClose();
           });
       })
-      .catch(() => {
-        showSnackbar("Failed to update user", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail ||
+            SnackbarMessages.organization.employees.updateError,
+          "error",
+        );
       })
       .finally(() => setIsLoading(false));
   };
@@ -117,7 +127,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
         !userRole ||
         !dateOfBirth
       ) {
-        showSnackbar("Please fill all fields", "error");
+        showSnackbar(SnackbarMessages.common.fillAllFields, "error");
         return;
       }
 
@@ -132,15 +142,22 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
           dateOfBirth: dateOfBirth.toISOString(),
         })
         .then(() => {
-          showSnackbar("User created successfully", "success");
+          showSnackbar(
+            SnackbarMessages.organization.employees.createSuccess,
+            "success",
+          );
           queryClient
             .invalidateQueries({ queryKey: tenantGetUsersKey })
             .then(() => {
               handleClose();
             });
         })
-        .catch(() => {
-          showSnackbar("Failed to create user", "error");
+        .catch((error: AxiosError<ErrorResponseType>) => {
+          showSnackbar(
+            error.response?.data.detail ||
+              SnackbarMessages.organization.employees.createError,
+            "error",
+          );
         })
         .finally(() => setIsLoading(false));
     }
@@ -191,7 +208,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
               />
             )}
             <TextField
-              label={"Lozinka"}
+              label={`Lozinka ${user ? "(ostavite prazno ako ne želite promijeniti)" : ""}`}
               fullWidth
               type={"password"}
               value={password}

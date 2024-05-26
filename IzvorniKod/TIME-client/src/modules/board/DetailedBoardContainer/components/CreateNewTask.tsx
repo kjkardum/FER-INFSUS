@@ -17,6 +17,9 @@ import { TaskboardDetailedDto, TaskItemState } from "@/api/generated";
 import useSnackbar from "@/hooks/useSnackbar";
 import TaskStateSelector from "@/components/TaskStateSelector/TaskStateSelector";
 import convertUserDataToSelectOptions from "@/utils/convertUserDataToSelectOptions";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { AxiosError } from "axios";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
 
 interface Props {
   open?: boolean;
@@ -50,7 +53,7 @@ const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
 
   const handleSave = () => {
     if (!taskName || !taskDescription) {
-      showSnackbar("Please fill all fields.", "error");
+      showSnackbar(SnackbarMessages.common.fillAllFields, "error");
       return;
     }
 
@@ -62,7 +65,7 @@ const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
         taskboardId: boardId,
       })
       .then((response) => {
-        showSnackbar("Task saved successfully.", "success");
+        showSnackbar(SnackbarMessages.tasks.createSuccess, "success");
         queryClient
           .invalidateQueries({
             queryKey: taskboardGetBoardDetailsKey(boardId),
@@ -75,14 +78,22 @@ const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
               newState: taskState as TaskItemState,
             })
             .then(() => {
+              showSnackbar(
+                SnackbarMessages.tasks.changeStateSuccess,
+                "success",
+              );
               queryClient
                 .invalidateQueries({
                   queryKey: taskboardGetBoardDetailsKey(boardId),
                 })
                 .then(() => onClose());
             })
-            .catch(() => {
-              showSnackbar("Failed to change task state.", "error");
+            .catch((error: AxiosError<ErrorResponseType>) => {
+              showSnackbar(
+                error.response?.data.detail ||
+                  SnackbarMessages.tasks.changeStateError,
+                "error",
+              );
             });
         }
 
@@ -92,18 +103,28 @@ const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
               assignedUserId: assignedTo,
             })
             .then(() => {
+              showSnackbar(SnackbarMessages.tasks.userAssignSuccess, "success");
               queryClient
                 .invalidateQueries({
                   queryKey: taskboardGetBoardDetailsKey(boardId),
                 })
                 .then(() => onClose());
             })
-            .catch(() => {
-              showSnackbar("Failed to assign task.", "error");
+            .catch((error: AxiosError<ErrorResponseType>) => {
+              showSnackbar(
+                error.response?.data.detail ||
+                  SnackbarMessages.tasks.userAssignError,
+                "error",
+              );
             });
         }
       })
-      .catch(() => {})
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail || SnackbarMessages.tasks.createError,
+          "error",
+        );
+      })
       .finally(() => setIsLoading(false));
   };
 

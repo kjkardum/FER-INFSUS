@@ -10,12 +10,30 @@ export default function Home() {
     <AppLayout>
       <Grid container spacing={2} marginBottom={"1rem"}>
         <Grid item xs={12} md={6}>
-          <Paper sx={{ padding: "1rem", height: "400px" }} elevation={1}>
+          <Paper
+            sx={{
+              padding: "1rem",
+              height: "400px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+            elevation={1}
+          >
             <WelcomeBackContainer />
           </Paper>
         </Grid>
         <Grid item xs={12} md={6}>
-          <Paper sx={{ padding: "1rem", height: "400px" }} elevation={1}>
+          <Paper
+            sx={{
+              padding: "1rem",
+              height: "400px",
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+            elevation={1}
+          >
             <SimpleBoardsContainer />
           </Paper>
         </Grid>

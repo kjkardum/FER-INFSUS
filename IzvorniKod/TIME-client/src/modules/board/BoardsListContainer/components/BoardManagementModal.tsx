@@ -18,6 +18,9 @@ import useSnackbar from "@/hooks/useSnackbar";
 import Select from "react-select";
 import useTenantGetUsers from "@/api/hooks/TenantEndpoint/useTenantGetUsers";
 import convertUserDataToSelectOptions from "@/utils/convertUserDataToSelectOptions";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
+import { AxiosError } from "axios";
 
 interface Props {
   open?: boolean;
@@ -56,7 +59,7 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
 
   const handleCreateNewBoard = () => {
     if (!boardName || !boardDescription) {
-      showSnackbar("Please fill all fields.", "error");
+      showSnackbar(SnackbarMessages.common.fillAllFields, "error");
       return;
     }
 
@@ -67,7 +70,7 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
         description: boardDescription,
       })
       .then((response) => {
-        showSnackbar("Board saved successfully.", "success");
+        showSnackbar(SnackbarMessages.boards.createSuccess, "success");
         try {
           if (boardUsers.length) {
             boardUsers
@@ -95,7 +98,7 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
             return;
           }
         } catch (e) {
-          showSnackbar("Failed to save board.", "error");
+          showSnackbar(SnackbarMessages.boards.createError, "error");
         }
 
         queryClient
@@ -104,8 +107,11 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
             handleClose();
           });
       })
-      .catch(() => {
-        showSnackbar("Failed to save board.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail || SnackbarMessages.boards.createError,
+          "error",
+        );
       })
       .finally(() => {
         setIsLoading(false);
@@ -114,7 +120,7 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
 
   const handleEditBoard = () => {
     if (!boardName || !boardDescription || !board || !board.id) {
-      showSnackbar("Please fill all fields.", "error");
+      showSnackbar(SnackbarMessages.common.fillAllFields, "error");
       return;
     }
 
@@ -125,7 +131,7 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
         description: boardDescription,
       })
       .then(() => {
-        showSnackbar("Board saved successfully.", "success");
+        showSnackbar(SnackbarMessages.boards.updateSuccess, "success");
 
         const currentBoardUsers =
           board.taskboardUsers?.map((user) => user.id) ?? [];
@@ -138,15 +144,32 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
           (userId) => userId && !boardUsers.includes(userId),
         );
 
-        if (usersToAdd.length)
-          usersToAdd
-            .map((userId) => ({
-              userId,
-              taskboardId: board.id,
-            }))
-            .forEach(async (user, index) => {
-              await taskboardEndpoint.apiTaskboardAssignPost(user);
-              if (index === usersToAdd.length - 1)
+        try {
+          if (usersToAdd.length)
+            usersToAdd
+              .map((userId) => ({
+                userId,
+                taskboardId: board.id,
+              }))
+              .forEach(async (user, index) => {
+                await taskboardEndpoint.apiTaskboardAssignPost(user);
+                if (index === usersToAdd.length - 1)
+                  queryClient
+                    .invalidateQueries({
+                      queryKey: taskboardGetAllBoardsKey,
+                    })
+                    .then(() => {
+                      handleClose();
+                    });
+              });
+
+          if (usersToRemove.length)
+            usersToRemove.forEach(async (userId, index) => {
+              await taskboardEndpoint.apiTaskboardUnassignPost({
+                userId,
+                taskboardId: board.id,
+              });
+              if (index === usersToRemove.length - 1)
                 queryClient
                   .invalidateQueries({
                     queryKey: taskboardGetAllBoardsKey,
@@ -155,22 +178,9 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
                     handleClose();
                   });
             });
-
-        if (usersToRemove.length)
-          usersToRemove.forEach(async (userId, index) => {
-            await taskboardEndpoint.apiTaskboardUnassignPost({
-              userId,
-              taskboardId: board.id,
-            });
-            if (index === usersToRemove.length - 1)
-              queryClient
-                .invalidateQueries({
-                  queryKey: taskboardGetAllBoardsKey,
-                })
-                .then(() => {
-                  handleClose();
-                });
-          });
+        } catch (e) {
+          showSnackbar(SnackbarMessages.boards.userAssignError, "error");
+        }
 
         queryClient
           .invalidateQueries({ queryKey: taskboardGetAllBoardsKey })
@@ -178,8 +188,11 @@ const BoardManagementModal = ({ open, board, handleClose }: Props) => {
             handleClose();
           });
       })
-      .catch(() => {
-        showSnackbar("Failed to save board.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail || SnackbarMessages.boards.updateError,
+          "error",
+        );
       })
       .finally(() => {
         setIsLoading(false);

@@ -18,6 +18,9 @@ import Link from "next/link";
 import UsersList from "@/modules/board/DetailedBoardContainer/components/UsersList";
 import taskboardEndpoint from "@/api/endpoints/TaskboardEndpoint";
 import useAuthentication from "@/hooks/useAuthentication";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { AxiosError } from "axios";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
 
 interface Props {
   boardId: string;
@@ -52,16 +55,19 @@ const DetailedBoardContainer = ({ boardId }: Props) => {
         setEditingBoardName(false);
         setEditingBoardDescription(false);
         refetch();
-        showSnackbar("Changes saved.", "success");
+        showSnackbar(SnackbarMessages.boards.updateSuccess, "success");
       })
-      .catch(() => {
-        showSnackbar("Failed to save changes.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail || SnackbarMessages.boards.updateError,
+          "error",
+        );
       });
   };
 
   useEffect(() => {
     if (isError) {
-      showSnackbar("Board not found.", "error");
+      showSnackbar(SnackbarMessages.boards.notFound, "error");
       router.push("/boards");
     }
   }, [isError, router, showSnackbar]);

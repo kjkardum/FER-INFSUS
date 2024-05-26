@@ -9,6 +9,7 @@ import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
 import useSnackbar from "@/hooks/useSnackbar";
 import { useQueryClient } from "@tanstack/react-query";
 import { tenantGetUsersKey } from "@/api/reactQueryKeys/TenantEndpointKeys";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
 
 const columns: GridColDef<UserDto>[] = [
   { field: "firstName", headerName: "Ime", width: 150 },
@@ -51,7 +52,10 @@ const EmployeesTable = ({ rows }: Props) => {
       tenantEndpoint
         .apiTenantManagementDeleteUserIdDelete(deleteUser.id)
         .then(() => {
-          showSnackbar("User deleted.", "success");
+          showSnackbar(
+            SnackbarMessages.organization.employees.deleteSuccess,
+            "success",
+          );
           setDeleteUser(undefined);
           queryClient.invalidateQueries({ queryKey: tenantGetUsersKey });
         });

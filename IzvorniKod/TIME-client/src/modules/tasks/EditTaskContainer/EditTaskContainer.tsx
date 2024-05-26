@@ -21,6 +21,7 @@ import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
 import taskItemEndpoint from "@/api/endpoints/TaskItemEndpoint";
 import { TaskItemState } from "@/api/generated";
 import { LoadingButton } from "@mui/lab";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
 
 interface Props {
   taskId: string;
@@ -62,17 +63,17 @@ const EditTaskContainer = ({ taskId }: Props) => {
   };
 
   const showSuccessMessageAndRedirect = () => {
-    showSnackbar("Task edited successfully.", "success");
+    showSnackbar(SnackbarMessages.tasks.updateSuccess, "success");
     router.push(`/board/${task?.taskboardId}`);
   };
 
   const showErrorMessage = () => {
-    showSnackbar("Oops! Something went wrong.", "error");
+    showSnackbar(SnackbarMessages.common.unknownError, "error");
   };
 
   const handleSave = async () => {
     if (!taskName || !taskDescription) {
-      showSnackbar("Please fill all fields.", "error");
+      showSnackbar(SnackbarMessages.common.fillAllFields, "error");
       return;
     }
 
@@ -87,7 +88,6 @@ const EditTaskContainer = ({ taskId }: Props) => {
       !taskStateIsDifferent &&
       !assignedToIsDifferent
     ) {
-      showSnackbar("No changes detected.", "info");
       return;
     }
 
@@ -123,7 +123,7 @@ const EditTaskContainer = ({ taskId }: Props) => {
 
   const handleDelete = () => {
     taskItemEndpoint.apiTaskItemIdDelete(taskId).then(() => {
-      showSnackbar("Task deleted successfully.", "success");
+      showSnackbar(SnackbarMessages.tasks.deleteSuccess, "success");
       router.push(`/board/${task?.taskboardId}`);
     });
   };
@@ -134,7 +134,7 @@ const EditTaskContainer = ({ taskId }: Props) => {
 
   useEffect(() => {
     if (isError) {
-      showSnackbar("Task not found.", "error");
+      showSnackbar(SnackbarMessages.tasks.notFound, "error");
       router.push("/boards");
     }
   }, [isError, router, showSnackbar]);

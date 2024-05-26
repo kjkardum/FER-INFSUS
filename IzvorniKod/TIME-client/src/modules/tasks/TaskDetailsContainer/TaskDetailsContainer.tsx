@@ -31,6 +31,9 @@ import { taskItemGetTaskItemKey } from "@/api/reactQueryKeys/TaskItemEndpointKey
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
 import { useRouter } from "next/navigation";
 import useAuthentication from "@/hooks/useAuthentication";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { AxiosError } from "axios";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
 
 interface Props {
   task: TaskItemDetailedDto;
@@ -43,7 +46,7 @@ const TaskContainer = ({ taskId }: { taskId: string }) => {
 
   useEffect(() => {
     if (isError) {
-      showSnackbar("Task not found.", "error");
+      showSnackbar(SnackbarMessages.tasks.notFound, "error");
       router.push("/boards");
     }
   }, [isError, router, showSnackbar]);
@@ -126,11 +129,15 @@ const TaskDetailsContainer = ({ task }: Props) => {
       newName: taskName,
     })
       .then(() => {
-        showSnackbar("Task name updated successfully.", "success");
+        showSnackbar(SnackbarMessages.tasks.updates.taskNameSuccess, "success");
         handleResetData();
       })
-      .catch(() => {
-        showSnackbar("Failed to update task name.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail ||
+            SnackbarMessages.tasks.updates.taskNameError,
+          "error",
+        );
       });
   };
 
@@ -142,11 +149,18 @@ const TaskDetailsContainer = ({ task }: Props) => {
       newDescription: taskDescription,
     })
       .then(() => {
-        showSnackbar("Task description updated successfully.", "success");
+        showSnackbar(
+          SnackbarMessages.tasks.updates.taskDescriptionSuccess,
+          "success",
+        );
         handleResetData();
       })
-      .catch(() => {
-        showSnackbar("Failed to update task description.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail ||
+            SnackbarMessages.tasks.updates.taskDescriptionError,
+          "error",
+        );
       });
   };
 
@@ -160,11 +174,18 @@ const TaskDetailsContainer = ({ task }: Props) => {
       newState: newTaskState,
     })
       .then(() => {
-        showSnackbar("Task state updated successfully.", "success");
+        showSnackbar(
+          SnackbarMessages.tasks.updates.taskStateSuccess,
+          "success",
+        );
         handleResetData();
       })
-      .catch(() => {
-        showSnackbar("Failed to update task state.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail ||
+            SnackbarMessages.tasks.updates.taskStateError,
+          "error",
+        );
       });
   };
 
@@ -177,11 +198,18 @@ const TaskDetailsContainer = ({ task }: Props) => {
       assignedUserId: assignedUserId || null,
     })
       .then(() => {
-        showSnackbar("Task assigned successfully.", "success");
+        showSnackbar(
+          SnackbarMessages.tasks.updates.userAssignSuccess,
+          "success",
+        );
         handleResetData();
       })
-      .catch(() => {
-        showSnackbar("Failed to assign task.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail ||
+            SnackbarMessages.tasks.updates.userAssignError,
+          "error",
+        );
       });
   };
 
@@ -189,17 +217,20 @@ const TaskDetailsContainer = ({ task }: Props) => {
     if (newTaskboardId === task?.taskboardId || newTaskboardId.trim() === "")
       return;
 
-    setOnBoard(newTaskboardId);
-
     TaskItemEndpoint.apiTaskItemIdMovePost(task.id ?? "", {
       newTaskboardId: newTaskboardId,
     })
       .then(() => {
-        showSnackbar("Task moved successfully.", "success");
+        setOnBoard(newTaskboardId);
+        showSnackbar(SnackbarMessages.tasks.updates.taskMoveSuccess, "success");
         handleResetData();
       })
-      .catch(() => {
-        showSnackbar("Failed to move task.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail ||
+            SnackbarMessages.tasks.updates.taskMoveError,
+          "error",
+        );
       });
   };
 
@@ -423,12 +454,19 @@ const TaskDetailsContainer = ({ task }: Props) => {
                 handleConfirm={() => {
                   TaskItemEndpoint.apiTaskItemIdDelete(task.id ?? "")
                     .then(() => {
-                      showSnackbar("Task deleted successfully.", "success");
+                      showSnackbar(
+                        SnackbarMessages.tasks.deleteSuccess,
+                        "success",
+                      );
                       router.push(`/board/${task?.taskboardId}`);
                       handleResetData();
                     })
-                    .catch(() => {
-                      showSnackbar("Failed to delete task.", "error");
+                    .catch((error: AxiosError<ErrorResponseType>) => {
+                      showSnackbar(
+                        error.response?.data.detail ||
+                          SnackbarMessages.tasks.deleteError,
+                        "error",
+                      );
                     });
                 }}
               />

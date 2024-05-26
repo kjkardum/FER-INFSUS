@@ -6,6 +6,7 @@ import AuthEndpoint from "@/api/endpoints/AuthEndpoint";
 import { LoadingButton } from "@mui/lab";
 import { WavingHand } from "@mui/icons-material";
 import useSnackbar from "@/hooks/useSnackbar";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -23,8 +24,8 @@ export default function Login() {
       .then((user) => {
         if (user.data.token) login(user.data.token);
       })
-      .catch((error) => {
-        showSnackbar("Invalid email or password", "error");
+      .catch(() => {
+        showSnackbar(SnackbarMessages.login.wrongCredentials, "error");
       })
       .finally(() => setIsLoading(false));
   };

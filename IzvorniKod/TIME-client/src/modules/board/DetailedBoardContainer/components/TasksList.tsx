@@ -13,11 +13,14 @@ import {
   styled,
   Typography,
 } from "@mui/material";
-import { Delete, Edit, ExpandMore } from "@mui/icons-material";
-import { TaskItemSimpleDto } from "@/api/generated";
+import { Delete, ExpandMore } from "@mui/icons-material";
+import {
+  TaskboardDetailedDto,
+  TaskItemSimpleDto,
+  TaskItemState,
+} from "@/api/generated";
 import useAuthentication from "@/hooks/useAuthentication";
 import CreateNewTask from "@/modules/board/DetailedBoardContainer/components/CreateNewTask";
-import getTaskStateFromStateNumber from "@/utils/getTaskStateFromStateNumber";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
@@ -25,41 +28,21 @@ import taskItemEndpoint from "@/api/endpoints/TaskItemEndpoint";
 import { useQueryClient } from "@tanstack/react-query";
 import { taskboardGetBoardDetailsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
 import useSnackbar from "@/hooks/useSnackbar";
+import getColorFromTaskStatus from "@/utils/getColorFromTaskStatus";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { AxiosError } from "axios";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
 
 const groupTasksByStatus = (tasks: TaskItemSimpleDto[]) => {
-  return tasks.reduce(
-    (acc, task) => {
-      if (task?.state === undefined) {
-        return acc;
-      }
+  const states = Object.keys(TaskItemState);
+  const groups: { [key: string]: TaskItemSimpleDto[] } = {};
 
-      if (!acc[task.state]) {
-        acc[task.state] = [];
-      }
+  states.forEach((state) => {
+    const tasksInState = tasks.filter((task) => task.state === state);
+    if (tasksInState.length) groups[state] = tasksInState;
+  });
 
-      acc[task.state].push(task);
-
-      return acc;
-    },
-    {} as Record<string, TaskItemSimpleDto[]>,
-  );
-};
-
-const statusToColor = (status: number) => {
-  switch (status) {
-    case 0:
-      return "primary";
-    case 1:
-      return "secondary";
-    case 2:
-      return "info";
-    case 3:
-      return "success";
-    case 4:
-      return "error";
-    default:
-      return "default";
-  }
+  return groups;
 };
 
 const HoverPaper = styled(Paper)(({ theme }) => ({
@@ -70,11 +53,13 @@ const HoverPaper = styled(Paper)(({ theme }) => ({
 }));
 
 interface Props {
-  tasks?: TaskItemSimpleDto[];
-  boardId: string;
+  board: TaskboardDetailedDto;
 }
 
-const TasksList = ({ tasks, boardId }: Props) => {
+const TasksList = ({ board }: Props) => {
+  const tasks = board.taskItems ?? [];
+  const boardId = board.id ?? "";
+
   const [openCreateTaskModal, setOpenCreateTaskModal] =
     useState<boolean>(false);
   const [deleteTaskId, setDeleteTaskId] = useState<string | undefined>(
@@ -86,7 +71,6 @@ const TasksList = ({ tasks, boardId }: Props) => {
   const queryClient = useQueryClient();
   const router = useRouter();
   const groupedTasks = groupTasksByStatus(tasks ?? []);
-  const groupedTasksKeys = Object.keys(groupedTasks).sort();
 
   const handleCreateTask = () => {
     setOpenCreateTaskModal(true);
@@ -94,17 +78,6 @@ const TasksList = ({ tasks, boardId }: Props) => {
 
   const handleCloseCreateTaskModal = () => {
     setOpenCreateTaskModal(false);
-  };
-
-  const handleEditTask = (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    taskId?: string,
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!taskId) return;
-
-    router.push(`/task/${taskId}/edit`);
   };
 
   const handleTaskClick = (taskId?: string) => {
@@ -130,13 +103,16 @@ const TasksList = ({ tasks, boardId }: Props) => {
     taskItemEndpoint
       .apiTaskItemIdDelete(deleteTaskId)
       .then(() => {
-        showSnackbar("Task deleted successfully.", "success");
+        showSnackbar(SnackbarMessages.tasks.deleteSuccess, "success");
         queryClient.invalidateQueries({
           queryKey: taskboardGetBoardDetailsKey(boardId),
         });
       })
-      .catch(() => {
-        showSnackbar("Failed to delete task.", "error");
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail || SnackbarMessages.tasks.deleteError,
+          "error",
+        );
       })
       .finally(() => setDeleteTaskId(undefined));
   };
@@ -150,21 +126,23 @@ const TasksList = ({ tasks, boardId }: Props) => {
         mb={"1rem"}
       >
         <Typography variant="h6" gutterBottom>
-          Tasks
+          Zadaci
         </Typography>
-        {isAdmin && (
-          <Button
-            size={"small"}
-            variant="contained"
-            color="primary"
-            sx={{ ml: "0.5rem" }}
-            onClick={handleCreateTask}
-          >
-            Add Task
-          </Button>
-        )}
+
+        <Button
+          size={"small"}
+          variant="contained"
+          color="primary"
+          sx={{ ml: "0.5rem" }}
+          onClick={handleCreateTask}
+        >
+          Dodaj zadatak
+        </Button>
       </Stack>
-      {groupedTasksKeys.map((key) => (
+      {(!tasks || tasks.length === 0) && (
+        <Typography variant="body1">Nema zadataka.</Typography>
+      )}
+      {Object.keys(groupedTasks).map((key) => (
         <Accordion key={`${key}_${groupedTasks[key].length}`} defaultExpanded>
           <AccordionSummary
             expandIcon={<ExpandMore />}
@@ -175,12 +153,10 @@ const TasksList = ({ tasks, boardId }: Props) => {
               <Chip
                 sx={{ mr: "0.5rem" }}
                 size={"small"}
-                label={`${groupedTasks[key]?.length || 0} tasks`}
-                color={statusToColor(Number(key))}
+                label={`${groupedTasks[key]?.length || 0} ${(groupedTasks[key]?.length || 0) === 1 ? "zadatak" : "zadataka"}`}
+                color={getColorFromTaskStatus(key as TaskItemState)}
               />
-              <Typography variant="subtitle1">
-                {getTaskStateFromStateNumber(Number(key))}
-              </Typography>
+              <Typography variant="subtitle1">{key}</Typography>
             </Stack>
           </AccordionSummary>
           <AccordionDetails>
@@ -202,7 +178,7 @@ const TasksList = ({ tasks, boardId }: Props) => {
                     <Typography variant="body1">{task.description}</Typography>
                     {/* TODO: clip description if too long */}
                     <Typography variant="body2">
-                      {`Created at: ${task.createdAt ? dayjs(task.createdAt).toDate().toDateString() : dayjs().toDate().toDateString()}`}
+                      {`Kreirano: ${task.createdAt ? dayjs(task.createdAt).format("DD-MM-YYYY HH:mm") : dayjs().format("DD-MM-YYYY HH:mm")}`}
                     </Typography>
                   </Box>
                   <Stack
@@ -219,19 +195,20 @@ const TasksList = ({ tasks, boardId }: Props) => {
                       {task.assignedUser && (
                         <Chip
                           color={"secondary"}
-                          label={`Assigned to: ${task.assignedUser.firstName} ${task.assignedUser.lastName}`}
+                          label={`Dodijeljeno: ${task.assignedUser.firstName} ${task.assignedUser.lastName}`}
                         />
                       )}
-                      {!task.assignedUser && <Chip label={`Not assigned`} />}
+                      {!task.assignedUser && (
+                        <Chip label={`Nije dodijeljeno`} />
+                      )}
                     </Stack>
-                    <IconButton onClick={(e) => handleEditTask(e, task.id)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      onClick={(e) => handleOpenDeleteTaskModal(e, task.id)}
-                    >
-                      <Delete />
-                    </IconButton>
+                    {isAdmin && (
+                      <IconButton
+                        onClick={(e) => handleOpenDeleteTaskModal(e, task.id)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    )}
                   </Stack>
                 </HoverPaper>
               ))}
@@ -240,13 +217,11 @@ const TasksList = ({ tasks, boardId }: Props) => {
         </Accordion>
       ))}
 
-      {isAdmin && (
-        <CreateNewTask
-          open={openCreateTaskModal}
-          boardId={boardId}
-          onClose={handleCloseCreateTaskModal}
-        />
-      )}
+      <CreateNewTask
+        open={openCreateTaskModal}
+        board={board}
+        onClose={handleCloseCreateTaskModal}
+      />
 
       {isAdmin && (
         <DeletePrompt

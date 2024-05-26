@@ -1126,6 +1126,71 @@
           }
         }
       }
+    },
+    "/api/TenantManagement/updateUser/{id}": {
+      "put": {
+        "tags": [
+          "TenantManagement"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/TenantManagement/deleteUser/{id}": {
+      "delete": {
+        "tags": [
+          "TenantManagement"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1379,14 +1444,13 @@
       },
       "TaskItemState": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4
+          "Novo",
+          "Spreman",
+          "Aktivan",
+          "Dovrsen",
+          "Prekinut"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "TaskboardAddUserCommand": {
         "type": "object",
@@ -1487,6 +1551,13 @@
           },
           "description": {
             "type": "string",
+            "nullable": true
+          },
+          "taskboardUsers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserDto"
+            },
             "nullable": true
           }
         },
@@ -1610,6 +1681,10 @@
             "type": "string",
             "nullable": true
           },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time"
+          },
           "userType": {
             "$ref": "#/components/schemas/UserType"
           },
@@ -1627,11 +1702,32 @@
       },
       "UserType": {
         "enum": [
-          0,
-          1
+          "USER",
+          "ADMIN"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
+      },
+      "UserUpdateCommand": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "type": "string",
+            "nullable": true
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "newPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
       }
     },
     "securitySchemes": {

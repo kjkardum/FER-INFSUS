@@ -2,29 +2,32 @@
 import React, { useMemo, useState } from "react";
 import { DataGrid, GridActionsCellItem, GridColDef } from "@mui/x-data-grid";
 import { UserDto } from "@/api/generated";
-import getRoleFromUserType from "@/utils/getRoleFromUserType";
 import { Delete, Edit } from "@mui/icons-material";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
 import UserManagementModal from "@/modules/organization/OrganizationContainer/components/UserManagementModal";
+import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
+import useSnackbar from "@/hooks/useSnackbar";
+import { useQueryClient } from "@tanstack/react-query";
+import { tenantGetUsersKey } from "@/api/reactQueryKeys/TenantEndpointKeys";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
 
 const columns: GridColDef<UserDto>[] = [
-  { field: "firstName", headerName: "First Name", width: 150 },
-  { field: "lastName", headerName: "Last Name", width: 150 },
+  { field: "firstName", headerName: "Ime", width: 150 },
+  { field: "lastName", headerName: "Prezime", width: 150 },
   {
     field: "email",
-    headerName: "Email",
+    headerName: "E-mail",
     width: 150,
     valueGetter: (_, row) => row.email?.toLowerCase(),
   },
   {
     field: "userType",
-    headerName: "Role",
+    headerName: "Uloga korisnika",
     width: 150,
-    valueGetter: (_, row) => getRoleFromUserType(row.userType ?? 0),
   },
   {
     field: "dateOfBirth",
-    headerName: "Date Of Birth",
+    headerName: "Datum rođenja",
     width: 150,
     valueGetter: (_, row) =>
       row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString() : "",
@@ -41,10 +44,21 @@ const EmployeesTable = ({ rows }: Props) => {
   );
   const [deleteUser, setDeleteUser] = useState<UserDto | undefined>(undefined);
 
+  const { showSnackbar } = useSnackbar();
+  const queryClient = useQueryClient();
+
   const handleDelete = () => {
-    if (deleteUser) {
-      // delete user
-    }
+    if (deleteUser && deleteUser.id)
+      tenantEndpoint
+        .apiTenantManagementDeleteUserIdDelete(deleteUser.id)
+        .then(() => {
+          showSnackbar(
+            SnackbarMessages.organization.employees.deleteSuccess,
+            "success",
+          );
+          setDeleteUser(undefined);
+          queryClient.invalidateQueries({ queryKey: tenantGetUsersKey });
+        });
   };
 
   const handleCloseDelete = () => {

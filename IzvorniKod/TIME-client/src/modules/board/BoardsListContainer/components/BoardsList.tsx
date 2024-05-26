@@ -10,14 +10,15 @@ import BoardManagementModal from "@/modules/board/BoardsListContainer/components
 import useAuthentication from "@/hooks/useAuthentication";
 import { TaskboardSimpleDto } from "@/api/generated";
 import useSnackbar from "@/hooks/useSnackbar";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { AxiosError } from "axios";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
 
 interface BoardsListProps {
   boards: Array<TaskboardSimpleDto>;
 }
 
 const BoardsList = ({ boards }: BoardsListProps) => {
-  const { isAdmin } = useAuthentication();
-
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [openDeleteBoardPrompt, setOpenDeleteBoardPrompt] =
     useState<boolean>(false);
@@ -27,6 +28,7 @@ const BoardsList = ({ boards }: BoardsListProps) => {
     TaskboardSimpleDto | undefined
   >(undefined);
 
+  const { isAdmin } = useAuthentication();
   const queryClient = useQueryClient();
   const { showSnackbar } = useSnackbar();
 
@@ -64,11 +66,14 @@ const BoardsList = ({ boards }: BoardsListProps) => {
     if (selectedBoard?.id)
       TaskboardEndpoint.apiTaskboardIdDelete(selectedBoard?.id)
         .then(() => {
-          showSnackbar("Board deleted successfully.", "success");
+          showSnackbar(SnackbarMessages.boards.deleteSuccess, "success");
           queryClient.invalidateQueries({ queryKey: taskboardGetAllBoardsKey });
         })
-        .catch(() => {
-          showSnackbar("Failed to delete board.", "error");
+        .catch((error: AxiosError<ErrorResponseType>) => {
+          showSnackbar(
+            error.response?.data.detail || SnackbarMessages.boards.deleteError,
+            "error",
+          );
         })
         .finally(() => {
           setOpenDeleteBoardPrompt(false);
@@ -95,20 +100,23 @@ const BoardsList = ({ boards }: BoardsListProps) => {
         open={!!anchorEl}
         onClose={menuClose}
       >
-        <MenuItem onClick={onOpenEditBoardPrompt}>Edit</MenuItem>
-        <MenuItem onClick={onOpenDeleteBoardPrompt}>Delete</MenuItem>
+        <MenuItem onClick={onOpenEditBoardPrompt}>Uredi</MenuItem>
+        <MenuItem onClick={onOpenDeleteBoardPrompt}>Izbriši</MenuItem>
       </Menu>
-
-      <DeletePrompt
-        open={openDeleteBoardPrompt}
-        handleClose={() => setOpenDeleteBoardPrompt(false)}
-        handleConfirm={onDeleteBoard}
-      />
-      <BoardManagementModal
-        open={openEditBoardPrompt}
-        board={selectedBoard}
-        handleClose={onCloseEditBoardPrompt}
-      />
+      {isAdmin && (
+        <>
+          <DeletePrompt
+            open={openDeleteBoardPrompt}
+            handleClose={() => setOpenDeleteBoardPrompt(false)}
+            handleConfirm={onDeleteBoard}
+          />
+          <BoardManagementModal
+            open={openEditBoardPrompt}
+            board={selectedBoard}
+            handleClose={onCloseEditBoardPrompt}
+          />
+        </>
+      )}
     </>
   );
 };

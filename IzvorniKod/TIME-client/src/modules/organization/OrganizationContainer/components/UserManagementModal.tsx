@@ -23,13 +23,15 @@ import React, {
 import { UserDto } from "@/api/generated";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import getRoleFromUserType from "@/utils/getRoleFromUserType";
 import dayjs from "dayjs";
 import { LoadingButton } from "@mui/lab";
 import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
 import { useQueryClient } from "@tanstack/react-query";
 import { tenantGetUsersKey } from "@/api/reactQueryKeys/TenantEndpointKeys";
 import useSnackbar from "@/hooks/useSnackbar";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
+import { AxiosError } from "axios";
 
 interface Props {
   user?: UserDto;
@@ -49,7 +51,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
     user?.dateOfBirth ? dayjs(user.dateOfBirth) : dayjs(),
   );
   const [userRole, setUserRole] = useState<string | undefined>(
-    user ? getRoleFromUserType(user.userType ?? 0).toLowerCase() : "user",
+    user ? (user.userType ?? "USER").toLowerCase() : "user",
   );
   const [isLoading, setIsLoading] = useState(false);
 
@@ -57,9 +59,9 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
     if (user) {
       setFirstName(user.firstName ?? "");
       setLastName(user.lastName ?? "");
-      setEmail(user.email ?? "");
+      setEmail(user.email?.toLowerCase() ?? "");
       setDateOfBirth(user.dateOfBirth ? dayjs(user.dateOfBirth) : dayjs());
-      setUserRole(getRoleFromUserType(user.userType ?? 0).toLowerCase());
+      setUserRole((user.userType ?? "USER").toLowerCase());
     }
   }, [user]);
 
@@ -78,10 +80,54 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
     setDateOfBirth(date ?? dayjs());
   };
 
+  const handleEdit = () => {
+    if (!user || !user.id) return;
+
+    if (!firstName || !lastName || !email || !userRole || !dateOfBirth) {
+      showSnackbar(SnackbarMessages.common.fillAllFields, "error");
+      return;
+    }
+
+    setIsLoading(true);
+    tenantEndpoint
+      .apiTenantManagementUpdateUserIdPut(user?.id, {
+        firstName: firstName ?? "",
+        lastName: lastName ?? "",
+        dateOfBirth: dateOfBirth.toISOString(),
+        newPassword: password || null,
+      })
+      .then(() => {
+        showSnackbar(
+          SnackbarMessages.organization.employees.updateSuccess,
+          "success",
+        );
+        queryClient
+          .invalidateQueries({ queryKey: tenantGetUsersKey })
+          .then(() => {
+            handleClose();
+          });
+      })
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail ||
+            SnackbarMessages.organization.employees.updateError,
+          "error",
+        );
+      })
+      .finally(() => setIsLoading(false));
+  };
+
   const handleSave = () => {
     if (!user) {
-      if (!firstName || !lastName || !email || !password || !userRole) {
-        showSnackbar("Please fill all fields", "error");
+      if (
+        !firstName ||
+        !lastName ||
+        !email ||
+        !password ||
+        !userRole ||
+        !dateOfBirth
+      ) {
+        showSnackbar(SnackbarMessages.common.fillAllFields, "error");
         return;
       }
 
@@ -92,21 +138,31 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
           lastName: lastName ?? "",
           email: email ?? "",
           password: password ?? "",
-          userType: userRole === "admin" ? 1 : 0,
+          userType: userRole === "admin" ? "ADMIN" : "USER",
+          dateOfBirth: dateOfBirth.toISOString(),
         })
         .then(() => {
-          showSnackbar("User created successfully", "success");
+          showSnackbar(
+            SnackbarMessages.organization.employees.createSuccess,
+            "success",
+          );
           queryClient
             .invalidateQueries({ queryKey: tenantGetUsersKey })
             .then(() => {
               handleClose();
             });
         })
-        .catch(() => {
-          showSnackbar("Failed to create user", "error");
+        .catch((error: AxiosError<ErrorResponseType>) => {
+          showSnackbar(
+            error.response?.data.detail ||
+              SnackbarMessages.organization.employees.createError,
+            "error",
+          );
         })
         .finally(() => setIsLoading(false));
     }
+
+    handleEdit();
   };
 
   return (
@@ -119,7 +175,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
         fullWidth={true}
       >
         <DialogTitle id="dialog-userManagment-prompt-title">
-          {user ? "Edit" : "Create new"} user
+          {user ? "Uredi korisnika" : "Dodaj korisnika"}
         </DialogTitle>
         <DialogContent>
           <Stack
@@ -129,42 +185,43 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             component={"form"}
           >
             <TextField
-              label={"First Name"}
+              label={"Ime"}
               fullWidth
               type={"text"}
               value={firstName}
               onChange={(e) => handleStringChange(e, setFirstName)}
             />
             <TextField
-              label={"Last Name"}
+              label={"Prezime"}
               fullWidth
               type={"text"}
               value={lastName}
               onChange={(e) => handleStringChange(e, setLastName)}
             />
+            {!user && (
+              <TextField
+                label={"E-mail"}
+                fullWidth
+                type={"email"}
+                value={email}
+                onChange={(e) => handleStringChange(e, setEmail)}
+              />
+            )}
             <TextField
-              label={"Email"}
-              fullWidth
-              type={"email"}
-              value={email}
-              onChange={(e) => handleStringChange(e, setEmail)}
-            />
-            <TextField
-              label={"Password"}
+              label={`Lozinka ${user ? "(ostavite prazno ako ne želite promijeniti)" : ""}`}
               fullWidth
               type={"password"}
               value={password}
               onChange={(e) => handleStringChange(e, setPassword)}
-              disabled={!!user}
             />
             <DatePicker
-              label={"Date of birth"}
+              label={"Datum rođenja"}
               value={dateOfBirth}
               onChange={handleDateChange}
             />
             <FormControl>
               <FormLabel id="demo-controlled-radio-buttons-group">
-                Role
+                Uloga korisnika
               </FormLabel>
               <RadioGroup
                 aria-labelledby="demo-controlled-radio-buttons-group"
@@ -176,12 +233,12 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
                 <FormControlLabel
                   value="admin"
                   control={<Radio />}
-                  label="Admin"
+                  label="Administrator"
                 />
                 <FormControlLabel
                   value="user"
                   control={<Radio />}
-                  label="User"
+                  label="Korisnik"
                 />
               </RadioGroup>
             </FormControl>
@@ -194,7 +251,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             onClick={handleClose}
             autoFocus
           >
-            Cancel
+            Poništi
           </Button>
           <LoadingButton
             variant={"contained"}
@@ -202,7 +259,7 @@ const UserManagementModal = ({ open, user, handleClose }: Props) => {
             onClick={handleSave}
             loading={isLoading}
           >
-            Save
+            Spremi
           </LoadingButton>
         </DialogActions>
       </Dialog>

@@ -12,45 +12,48 @@ import React, { ChangeEvent, useEffect, useMemo, useState } from "react";
 import taskItemEndpoint from "@/api/endpoints/TaskItemEndpoint";
 import { useQueryClient } from "@tanstack/react-query";
 import { taskboardGetBoardDetailsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
-import useTenantGetUsers from "@/api/hooks/TenantEndpoint/useTenantGetUsers";
 import Select from "react-select";
-import { TaskItemState } from "@/api/generated";
+import { TaskboardDetailedDto, TaskItemState } from "@/api/generated";
 import useSnackbar from "@/hooks/useSnackbar";
 import TaskStateSelector from "@/components/TaskStateSelector/TaskStateSelector";
 import convertUserDataToSelectOptions from "@/utils/convertUserDataToSelectOptions";
+import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
+import { AxiosError } from "axios";
+import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
 
 interface Props {
   open?: boolean;
-  boardId: string;
+  board: TaskboardDetailedDto;
   onClose: () => void;
 }
 
-const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
+const CreateNewTaskModal = ({ open, board, onClose }: Props) => {
+  const boardId = board.id ?? "";
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [taskName, setTaskName] = useState<string>("");
   const [taskDescription, setTaskDescription] = useState<string>("");
-  const [taskState, setTaskState] = useState<number>(0);
+  const [taskState, setTaskState] = useState<TaskItemState>("Novo");
   const [assignedTo, setAssignedTo] = useState<string>("");
 
   const queryClient = useQueryClient();
-  const { data: usersData } = useTenantGetUsers();
   const { showSnackbar } = useSnackbar();
 
   const users = useMemo(
-    () => convertUserDataToSelectOptions(usersData?.data ?? []),
-    [usersData],
+    () => convertUserDataToSelectOptions(board.taskboardUsers ?? []),
+    [board.taskboardUsers],
   );
 
   useEffect(() => {
     setTaskName("");
     setTaskDescription("");
-    setTaskState(0);
+    setTaskState("Novo");
     setAssignedTo("");
   }, [open]);
 
   const handleSave = () => {
     if (!taskName || !taskDescription) {
-      showSnackbar("Please fill all fields.", "error");
+      showSnackbar(SnackbarMessages.common.fillAllFields, "error");
       return;
     }
 
@@ -62,27 +65,35 @@ const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
         taskboardId: boardId,
       })
       .then((response) => {
-        showSnackbar("Task saved successfully.", "success");
+        showSnackbar(SnackbarMessages.tasks.createSuccess, "success");
         queryClient
           .invalidateQueries({
             queryKey: taskboardGetBoardDetailsKey(boardId),
           })
           .then(() => onClose());
 
-        if (taskState !== 0) {
+        if (taskState !== "Novo") {
           taskItemEndpoint
             .apiTaskItemIdChangeStatePost(response.data.id ?? "", {
               newState: taskState as TaskItemState,
             })
             .then(() => {
+              showSnackbar(
+                SnackbarMessages.tasks.changeStateSuccess,
+                "success",
+              );
               queryClient
                 .invalidateQueries({
                   queryKey: taskboardGetBoardDetailsKey(boardId),
                 })
                 .then(() => onClose());
             })
-            .catch(() => {
-              showSnackbar("Failed to change task state.", "error");
+            .catch((error: AxiosError<ErrorResponseType>) => {
+              showSnackbar(
+                error.response?.data.detail ||
+                  SnackbarMessages.tasks.changeStateError,
+                "error",
+              );
             });
         }
 
@@ -92,23 +103,33 @@ const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
               assignedUserId: assignedTo,
             })
             .then(() => {
+              showSnackbar(SnackbarMessages.tasks.userAssignSuccess, "success");
               queryClient
                 .invalidateQueries({
                   queryKey: taskboardGetBoardDetailsKey(boardId),
                 })
                 .then(() => onClose());
             })
-            .catch(() => {
-              showSnackbar("Failed to assign task.", "error");
+            .catch((error: AxiosError<ErrorResponseType>) => {
+              showSnackbar(
+                error.response?.data.detail ||
+                  SnackbarMessages.tasks.userAssignError,
+                "error",
+              );
             });
         }
       })
-      .catch(() => {})
+      .catch((error: AxiosError<ErrorResponseType>) => {
+        showSnackbar(
+          error.response?.data.detail || SnackbarMessages.tasks.createError,
+          "error",
+        );
+      })
       .finally(() => setIsLoading(false));
   };
 
   const handleStateChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setTaskState(Number(event.target.value));
+    setTaskState(event.target.value as TaskItemState);
   };
 
   return (
@@ -119,7 +140,7 @@ const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
       aria-describedby="dialog-createNewTask-prompt-description"
       fullWidth={true}
     >
-      <DialogTitle>Create new task for board</DialogTitle>
+      <DialogTitle>Kreiraj novi zadatak</DialogTitle>
       <DialogContent>
         <Stack spacing={2} py={"0.5rem"}>
           <TextField
@@ -127,7 +148,7 @@ const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
             name={"taskName"}
             value={taskName}
             onChange={(e) => setTaskName(e.target.value)}
-            label="Task name"
+            label={"Ime zadatka"}
             type="text"
             fullWidth
           />
@@ -135,7 +156,7 @@ const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
             value={taskDescription}
             onChange={(e) => setTaskDescription(e.target.value)}
             name={"taskDescription"}
-            label="Task description"
+            label={"Opis zadatka"}
             type="text"
             rows={4}
             fullWidth
@@ -150,7 +171,7 @@ const CreateNewTaskModal = ({ open, boardId, onClose }: Props) => {
             onChange={(selectedOption) =>
               setAssignedTo(selectedOption?.value ?? "")
             }
-            placeholder={"Assign to user"}
+            placeholder={"Dodijeli zadatak korisniku..."}
             isSearchable={true}
             isClearable={true}
             menuPosition={"fixed"}

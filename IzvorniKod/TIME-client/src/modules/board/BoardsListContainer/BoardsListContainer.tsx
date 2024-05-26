@@ -23,8 +23,6 @@ const BoardsListContainer = () => {
     isSuccess: isSuccessMyBoards,
   } = useTaskboardGetAssignedBoards(isAdmin);
 
-  // TODO: check potential caching issues
-
   const filteredData = useMemo(
     () =>
       (allBoards || myBoards)?.filter(
@@ -37,8 +35,8 @@ const BoardsListContainer = () => {
 
   return (
     <Box>
-      <Typography variant="h5" gutterBottom>
-        Boards
+      <Typography variant="h4" gutterBottom>
+        Radne ploče
         {isAdmin && (
           <IconButton
             sx={{ ml: "0.25rem" }}
@@ -59,15 +57,17 @@ const BoardsListContainer = () => {
         filteredData &&
         filteredData.length === 0 && (
           <Typography>
-            No boards found.{" "}
-            {isAdmin && "Click on the + icon to create a new board."}
+            Nemate niti jednu radnu ploču.{" "}
+            {isAdmin && "Kliknite na + za kreiranje nove radne ploče."}
           </Typography>
         )}
       {(isSuccess || isSuccessMyBoards) &&
         searchQuery &&
         filteredData &&
         filteredData.length === 0 && (
-          <Typography>No boards found for query</Typography>
+          <Typography>
+            Nema radnih ploča koje odgovaraju unesenom upitu.
+          </Typography>
         )}
       {(isSuccess || isSuccessMyBoards) &&
         filteredData &&

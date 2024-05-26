@@ -89,7 +89,7 @@ const SideMenu = () => {
           onClick={handleLogout}
           sx={{ width: 150 }}
         >
-          Logout
+          Odjava
         </Button>
       </Stack>
     </Stack>

@@ -5,11 +5,11 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
-import getTaskStateFromStateNumber from "@/utils/getTaskStateFromStateNumber";
 import React from "react";
+import { TaskItemState } from "@/api/generated";
 
 interface Props {
-  taskState: number;
+  taskState: TaskItemState;
   handleStateChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -17,7 +17,7 @@ const TaskStateSelector = ({ taskState, handleStateChange }: Props) => {
   return (
     <FormControl>
       <FormLabel id="controlled-radio-buttons-group-taskStateSelector">
-        Role
+        Stanje zadatka
       </FormLabel>
       <RadioGroup
         aria-labelledby="controlled-radio-buttons-group-taskStateSelector"
@@ -26,12 +26,12 @@ const TaskStateSelector = ({ taskState, handleStateChange }: Props) => {
         onChange={handleStateChange}
         row
       >
-        {[0, 1, 2, 3, 4].map((value) => (
+        {Object.keys(TaskItemState).map((value) => (
           <FormControlLabel
             key={value}
             value={value}
             control={<Radio />}
-            label={getTaskStateFromStateNumber(value)}
+            label={value}
           />
         ))}
       </RadioGroup>

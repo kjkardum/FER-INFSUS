@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FER.InfSus.Time.Application
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FER.InfSus.Time.Infrastructure.Tests", "Tests\FER.InfSus.Time.Infrastructure.Tests\FER.InfSus.Time.Infrastructure.Tests.csproj", "{BCB64D38-40B4-422D-A904-309FA25CD3B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FER.InfSus.Time.Integration.Tests", "Tests\FER.InfSus.Time.Integration.Tests\FER.InfSus.Time.Integration.Tests.csproj", "{0CCB0AC8-1CFA-4EC9-ADB8-5BC9D4F26619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,10 +64,15 @@ Global
 		{BCB64D38-40B4-422D-A904-309FA25CD3B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BCB64D38-40B4-422D-A904-309FA25CD3B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BCB64D38-40B4-422D-A904-309FA25CD3B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CCB0AC8-1CFA-4EC9-ADB8-5BC9D4F26619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CCB0AC8-1CFA-4EC9-ADB8-5BC9D4F26619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CCB0AC8-1CFA-4EC9-ADB8-5BC9D4F26619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CCB0AC8-1CFA-4EC9-ADB8-5BC9D4F26619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{D9BB11B8-5F15-43C4-AAEB-CFC2E8B5F091} = {ADC6F3C6-BA57-4A03-AF2E-4B501100F82D}
 		{3F9DA92D-7021-47F8-A3E7-50987C971C5A} = {ADC6F3C6-BA57-4A03-AF2E-4B501100F82D}
 		{BCB64D38-40B4-422D-A904-309FA25CD3B9} = {ADC6F3C6-BA57-4A03-AF2E-4B501100F82D}
+		{0CCB0AC8-1CFA-4EC9-ADB8-5BC9D4F26619} = {ADC6F3C6-BA57-4A03-AF2E-4B501100F82D}
 	EndGlobalSection
 EndGlobal

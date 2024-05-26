@@ -6,19 +6,12 @@ using FER.InfSus.Time.Infrastructure.Persistence;
 
 namespace FER.InfSus.Time.Infrastructure.Repositories;
 
-public class UserRepository : IUserRepository
+public class UserRepository(ApplicationDbContext dbContext) : IUserRepository
 {
-    private readonly ApplicationDbContext _dbContext;
-
-    public UserRepository(ApplicationDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
-
     public async Task<User> Create(User user)
     {
-        await _dbContext.AddAsync(user);
-        await _dbContext.SaveChangesAsync();
+        await dbContext.AddAsync(user);
+        await dbContext.SaveChangesAsync();
 
         return user;
     }
@@ -26,12 +19,17 @@ public class UserRepository : IUserRepository
     public async Task<User> UpdateLastLogin(User user)
     {
         user.LastLogin = DateTime.UtcNow;
-        _dbContext.Update(user);
-        await _dbContext.SaveChangesAsync();
+        dbContext.Update(user);
+        await dbContext.SaveChangesAsync();
         return user;
     }
 
-    public Task<ICollection<User>> GetPaginated(Guid tenantId, int page, int pageSize, string? orderBy, string? filterBy)
+    public Task<ICollection<User>> GetPaginated(
+        Guid tenantId,
+        int page,
+        int pageSize,
+        string? orderBy,
+        string? filterBy)
         => GetPaginated(GetAsQueryable(), tenantId, page, pageSize, orderBy, filterBy);
 
     public async Task<ICollection<User>> GetPaginated(
@@ -71,27 +69,27 @@ public class UserRepository : IUserRepository
             .ToListAsync();
     }
 
-    public IQueryable<User> GetAsQueryable() => _dbContext.Users.AsQueryable();
+    public IQueryable<User> GetAsQueryable() => dbContext.Users.AsQueryable();
 
-    public Task<int> CountUsers() => _dbContext.Users.CountAsync();
+    public Task<int> CountUsers() => dbContext.Users.CountAsync();
     public Task Update(User user)
     {
-        _dbContext.Update(user);
-        return _dbContext.SaveChangesAsync();
+        dbContext.Update(user);
+        return dbContext.SaveChangesAsync();
     }
 
     public Task Delete(User user)
     {
-        _dbContext.Remove(user);
-        return _dbContext.SaveChangesAsync();
+        dbContext.Remove(user);
+        return dbContext.SaveChangesAsync();
     }
 
     public async Task<User?> GetByEmail(string email)
-        => await _dbContext.Users.SingleOrDefaultAsync(t => t.Email == email);
+        => await dbContext.Users.SingleOrDefaultAsync(t => t.Email == email);
 
     public Task<User?> GetByUserId(Guid userId)
-        => _dbContext.Users.SingleOrDefaultAsync(x => x.Id == userId);
+        => dbContext.Users.SingleOrDefaultAsync(x => x.Id == userId);
 
     public Task<bool> DoesUserExist(string email)
-        => _dbContext.Users.AnyAsync(t => t.Email == email);
+        => dbContext.Users.AnyAsync(t => t.Email == email);
 }

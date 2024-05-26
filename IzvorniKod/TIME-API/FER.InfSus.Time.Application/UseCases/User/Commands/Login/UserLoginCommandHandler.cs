@@ -18,12 +18,12 @@ public class UserLoginCommandHandler(
         var user = await userRepository.GetByEmail(request.NormalizedEmail);
         if (user == null)
         {
-            throw new EntityNotFoundException("Korisnik s ovim emailom ne postoji");
+            throw new UnAuthorizedAccessException("Neispravni podaci za prijavu");
         }
 
         if (!signInService.CheckPasswordHash(user.PasswordHash, request.Password))
         {
-            throw new UnAuthorizedAccessException("Neispravna lozinka");
+            throw new UnAuthorizedAccessException("Neispravn podaci za prijavu");
         }
 
         var newUser = await userRepository.UpdateLastLogin(user);

@@ -17,7 +17,6 @@ public class AuthenticationController(IMediator mediator) : ControllerBase
     /// <param name="cancellationToken">A <see cref="CancellationToken"/> to observe while waiting for the task to complete.</param>
     /// <returns>Logged in user token and data.</returns>
     /// <response code="200">Ok - logged in user.</response>
-    /// <response code="400">Not Found - user with email not found.</response>
     /// <response code="401">Unauthorized - incorrect password for user.</response>
     [HttpPost("Login")]
     [Produces(MediaTypeNames.Application.Json)]
@@ -33,6 +32,6 @@ public class AuthenticationController(IMediator mediator) : ControllerBase
             request,
             cancellationToken);
 
-        return result;
+        return Ok(result);
     }
 }

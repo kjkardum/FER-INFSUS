@@ -10,7 +10,8 @@ public class UserProfile: Profile
     {
         CreateMap<User, LoggedInUserDto>()
             .ForMember(t => t.Role, opt => opt.Ignore())
-            .ForMember(t => t.Token, opt => opt.Ignore());
+            .ForMember(t => t.Token, opt => opt.Ignore())
+            .ForMember(t => t.Username, opt => opt.MapFrom(s => $"{s.FirstName} {s.LastName}"));
 
         CreateMap<User, UserDto>();
     }

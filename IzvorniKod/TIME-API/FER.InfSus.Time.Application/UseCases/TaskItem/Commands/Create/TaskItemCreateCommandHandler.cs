@@ -47,7 +47,7 @@ public class TaskItemCreateCommandHandler(
                 new()
                 {
                     Changelog = $"""
-                                {requestor!.FirstName}{requestor!.LastName} stvorio novi zadatak
+                                {requestor!.FirstName} {requestor!.LastName} stvorio novi zadatak
                                 Naziv: {request.Name}
                                 Opis: {request.Description}
                                 Stanje: {nameof(TaskItemState.Novo)}

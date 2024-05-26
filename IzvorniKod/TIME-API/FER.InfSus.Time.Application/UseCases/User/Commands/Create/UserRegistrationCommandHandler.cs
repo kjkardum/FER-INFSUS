@@ -1,8 +1,6 @@
 using ApiExceptions.Exceptions;
-using AutoMapper;
 using FER.InfSus.Time.Application.Repositories;
 using FER.InfSus.Time.Application.Services;
-using FER.InfSus.Time.Application.UseCases.User.Dto;
 using FER.InfSus.Time.Domain.Enums;
 using MediatR;
 

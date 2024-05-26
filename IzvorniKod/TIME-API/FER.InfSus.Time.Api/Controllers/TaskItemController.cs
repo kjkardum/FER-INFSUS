@@ -54,7 +54,7 @@ public class TaskItemController(
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status403Forbidden)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<TaskItemDetailedDto>> CreateTaskItem(
+    public async Task<ActionResult<TaskItemSimpleDto>> CreateTaskItem(
         TaskItemCreateCommand command,
         CancellationToken cancellationToken = default)
     {

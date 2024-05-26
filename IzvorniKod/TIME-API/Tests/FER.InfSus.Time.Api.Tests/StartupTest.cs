@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using NSubstitute;
 using Swashbuckle.AspNetCore.Swagger;
 using FER.InfSus.Time.Application.Repositories;
+using FER.InfSus.Time.Application.Services;
 using FER.InfSus.Time.Infrastructure.Persistence;
 using Xunit;
 
@@ -42,6 +43,9 @@ public class StartupTest : WebHostTestBase
     {
         AssertRegisteredService<ApplicationDbContext>(serviceProvider);
         AssertRegisteredService<IUserRepository>(serviceProvider);
+        AssertRegisteredService<ITaskItemRepository>(serviceProvider);
+        AssertRegisteredService<ITaskboardRepository>(serviceProvider);
+        AssertRegisteredService<ISignInService>(serviceProvider);
         AssertRegisteredService<IMapper>(serviceProvider);
         AssertRegisteredService<IHttpContextAccessor>(serviceProvider);
 

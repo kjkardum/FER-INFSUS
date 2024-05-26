@@ -25,17 +25,19 @@ public class AuthenticationControllerTests: WebHostTestBase
     }
 
     [Fact]
-    public async Task Login_User_Returns_User()
+    public async Task Login_User_Returns_LoggedInUserDto()
     {
         //Arrange
         var dto = AutoFaker.Generate<UserLoginCommand>();
 
         var cancellationToken = default(CancellationToken);
-        var request = Arg.Is<UserLoginCommand>(
-            x => x.Email == dto.Email);
         var response = AutoFaker.Generate<LoggedInUserDto>();
 
-        _mediator.Send(request, cancellationToken).Returns(response);
+        _mediator.Send(
+            Arg.Is<UserLoginCommand>(
+                x => x.Email == dto.Email),
+            cancellationToken)
+            .Returns(response);
 
         //Act
         var result = await _controller.Login(
@@ -45,7 +47,16 @@ public class AuthenticationControllerTests: WebHostTestBase
         //Assert
         result.Result.Should().BeOfType<OkObjectResult>();
         var responseResult = result.Result as OkObjectResult;
+        // Controller method ActionResult generic return type doesn't ensure the type of actual value returned if used with OkObjectResult
+        var controllerMethodReturnType = _controller
+            .GetType()
+            .GetMethod(nameof(_controller.Login))!
+            .ReturnType // Task<ActionResult<Type>>
+            .GetGenericArguments()[0] // ActionResult<Type>
+            .GetGenericArguments()[0]; // Type
         responseResult.Should().NotBeNull();
+        responseResult!.Value.Should().NotBeNull();
         responseResult!.Value.Should().BeEquivalentTo(response);
+        responseResult!.Value.Should().BeOfType(controllerMethodReturnType);
     }
 }

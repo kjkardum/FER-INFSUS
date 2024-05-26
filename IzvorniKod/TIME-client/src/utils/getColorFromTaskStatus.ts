@@ -6,7 +6,7 @@ const getColorFromTaskStatus = (status: TaskItemState) => {
       return "default";
     case "Aktivan":
       return "secondary";
-    case "Dovrsen":
+    case "Dovršen":
       return "success";
     case "Spreman":
       return "info";

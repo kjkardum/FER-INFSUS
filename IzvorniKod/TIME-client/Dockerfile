@@ -11,6 +11,6 @@ COPY .eslintrc.json ./
 COPY public ./public
 COPY src ./src
 
-RUN npm
-RUN npm build
-CMD ["npm", "start"]
+RUN npm install
+RUN npm run build
+CMD ["npm", "run", "start"]

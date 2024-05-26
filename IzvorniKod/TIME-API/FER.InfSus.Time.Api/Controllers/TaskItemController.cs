@@ -9,6 +9,7 @@ using FER.InfSus.Time.Application.UseCases.TaskItem.Commands.Create;
 using FER.InfSus.Time.Application.UseCases.TaskItem.Commands.Delete;
 using FER.InfSus.Time.Application.UseCases.TaskItem.Commands.Rename;
 using FER.InfSus.Time.Application.UseCases.TaskItem.Dtos;
+using FER.InfSus.Time.Application.UseCases.TaskItem.Queries.GetAllByAssignedUser;
 using FER.InfSus.Time.Application.UseCases.TaskItem.Queries.GetById;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -44,6 +45,24 @@ public class TaskItemController(
             cancellationToken);
 
         return Ok(taskboard);
+    }
+
+    [HttpGet("assigned")]
+    [Produces(MediaTypeNames.Application.Json)]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status401Unauthorized)]
+    public async Task<ActionResult<ICollection<TaskItemSimpleDto>>> GetAssignedTaskItems(
+        CancellationToken cancellationToken = default)
+    {
+        var taskboards = await mediator.Send(
+            new TaskItemGetAllByAssignedUserQuery
+            {
+                RequestorId = (Guid)authenticationService.GetUserId()!
+            },
+            cancellationToken);
+
+        return Ok(taskboards);
     }
 
     [HttpPost]

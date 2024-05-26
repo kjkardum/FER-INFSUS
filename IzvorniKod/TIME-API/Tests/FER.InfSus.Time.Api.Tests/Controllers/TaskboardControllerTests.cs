@@ -84,7 +84,7 @@ public class TaskboardControllerTests : WebHostTestBase
             .GetGenericArguments()[0]; // Type (TaskboardSimpleDto)
         responseResult!.Value.Should().BeEquivalentTo(response);
         responseResult!.Value.Should().BeOfType<List<TaskboardSimpleDto>>();
-        ((responseResult!.Value as IList)!)[0].Should().BeOfType(controllerMethodSingleItemReturnType);
+        (responseResult!.Value as IList)![0].Should().BeOfType(controllerMethodSingleItemReturnType);
     }
 
     [Fact]

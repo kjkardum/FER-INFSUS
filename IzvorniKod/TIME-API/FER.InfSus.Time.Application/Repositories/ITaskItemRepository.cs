@@ -9,4 +9,5 @@ public interface ITaskItemRepository
     Task Delete(TaskItem taskItem, CancellationToken cancellationToken = default);
     Task<TaskItem?> GetById(Guid id, CancellationToken cancellationToken = default);
     Task AddHistoryLog(TaskItemHistoryLog historyLog, CancellationToken cancellationToken = default);
+    Task<ICollection<TaskItem>> GetByAssignedUserId(Guid assignedUserId);
 }

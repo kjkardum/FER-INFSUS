@@ -38,4 +38,10 @@ public class TaskItemRepository(ApplicationDbContext dbContext): ITaskItemReposi
         await dbContext.AddAsync(historyLog, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<ICollection<TaskItem>> GetByAssignedUserId(Guid assignedUserId) =>
+        await dbContext.TaskItems
+            .Include(t => t.AssignedUser)
+            .Where(t => t.AssignedUserId == assignedUserId)
+            .ToListAsync();
 }

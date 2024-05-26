@@ -9,11 +9,14 @@ using FER.InfSus.Time.Application.UseCases.TaskItem.Commands.Create;
 using FER.InfSus.Time.Application.UseCases.TaskItem.Commands.Delete;
 using FER.InfSus.Time.Application.UseCases.TaskItem.Commands.Rename;
 using FER.InfSus.Time.Application.UseCases.TaskItem.Dtos;
+using FER.InfSus.Time.Application.UseCases.TaskItem.Queries.GetAllByAssignedUser;
 using FER.InfSus.Time.Application.UseCases.TaskItem.Queries.GetById;
 using FluentAssertions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
+using System.Collections;
+using System.Reflection;
 using Xunit;
 
 namespace FER.InfSus.Time.Api.Tests.Controllers;
@@ -56,6 +59,34 @@ public class TaskItemControllerTests
             .GetGenericArguments()[0]; // Type
         responseResult!.Value.Should().BeEquivalentTo(response);
         responseResult!.Value.Should().BeOfType(controllerMethodReturnType);
+    }
+
+    [Fact]
+    public async Task GetAssignedTaskItems_Returns_TaskItemSimpleDtoCollection()
+    {
+        // Arrange
+        var cancellationToken = default(CancellationToken);
+        var response = AutoFaker.Generate<TaskItemSimpleDto>(5);
+
+        _authenticationService.GetUserId().Returns(Guid.NewGuid());
+        _mediator.Send(Arg.Any<TaskItemGetAllByAssignedUserQuery>(), cancellationToken).Returns(response);
+
+        // Act
+        var result = await _controller.GetAssignedTaskItems(cancellationToken);
+
+        // Assert
+        result.Result.Should().BeOfType<OkObjectResult>();
+        var responseResult = result.Result as OkObjectResult;
+        var controllerMethodSingleItemReturnType = _controller
+            .GetType()
+            .GetMethod(nameof(_controller.GetAssignedTaskItems))!
+            .ReturnType // Task<ActionResult<Type>>
+            .GetGenericArguments()[0] // ActionResult<Type>
+            .GetGenericArguments()[0] // Type (ICollection<TaskItemSimpleDto>)
+            .GetGenericArguments()[0]; // Type (TaskItemSimpleDto)
+        responseResult!.Value.Should().BeEquivalentTo(response);
+        responseResult!.Value.Should().BeOfType<List<TaskItemSimpleDto>>();
+        (responseResult!.Value as IList)![0].Should().BeOfType(controllerMethodSingleItemReturnType);
     }
 
     [Fact]

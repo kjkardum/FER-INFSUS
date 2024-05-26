@@ -1,4 +1,3 @@
-using ApiExceptions.Exceptions;
 using AutoMapper;
 using FER.InfSus.Time.Application.Repositories;
 using FER.InfSus.Time.Application.UseCases.Taskboard.Dtos;
@@ -8,7 +7,6 @@ namespace FER.InfSus.Time.Application.UseCases.Taskboard.Queries.GetAllByUserId;
 
 public class TaskboardGetAllByUserIdQueryHandler(
     ITaskboardRepository taskboardRepository,
-    IUserRepository userRepository,
     IMapper mapper) : IRequestHandler<TaskboardGetAllByUserIdQuery, ICollection<TaskboardSimpleDto>>
 {
     public async Task<ICollection<TaskboardSimpleDto>> Handle(

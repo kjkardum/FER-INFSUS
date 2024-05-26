@@ -52,7 +52,7 @@ public class TaskItemController(
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Microsoft.AspNetCore.Mvc.ProblemDetails), StatusCodes.Status401Unauthorized)]
-    public async Task<ActionResult<ICollection<TaskItemSimpleDto>>> GetAssignedTaskItems(
+    public async Task<ActionResult<ICollection<TaskItemForTasklistDto>>> GetAssignedTaskItems(
         CancellationToken cancellationToken = default)
     {
         var taskboards = await mediator.Send(

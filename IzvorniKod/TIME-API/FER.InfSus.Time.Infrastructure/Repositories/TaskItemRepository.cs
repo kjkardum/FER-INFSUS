@@ -42,6 +42,7 @@ public class TaskItemRepository(ApplicationDbContext dbContext): ITaskItemReposi
     public async Task<ICollection<TaskItem>> GetByAssignedUserId(Guid assignedUserId) =>
         await dbContext.TaskItems
             .Include(t => t.AssignedUser)
+            .Include(t => t.Taskboard)
             .Where(t => t.AssignedUserId == assignedUserId)
             .ToListAsync();
 }

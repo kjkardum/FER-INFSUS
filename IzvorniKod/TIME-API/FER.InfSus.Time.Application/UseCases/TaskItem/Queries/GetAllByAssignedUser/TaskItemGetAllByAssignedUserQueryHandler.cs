@@ -7,15 +7,15 @@ namespace FER.InfSus.Time.Application.UseCases.TaskItem.Queries.GetAllByAssigned
 
 public class TaskItemGetAllByAssignedUserQueryHandler(
     ITaskItemRepository taskItemRepository,
-    IMapper mapper) : IRequestHandler<TaskItemGetAllByAssignedUserQuery, ICollection<TaskItemSimpleDto>>
+    IMapper mapper) : IRequestHandler<TaskItemGetAllByAssignedUserQuery, ICollection<TaskItemForTasklistDto>>
 {
-    public async Task<ICollection<TaskItemSimpleDto>> Handle(
+    public async Task<ICollection<TaskItemForTasklistDto>> Handle(
         TaskItemGetAllByAssignedUserQuery request,
         CancellationToken cancellationToken)
     {
         var taskItems = await taskItemRepository.GetByAssignedUserId(request.RequestorId);
 
-        var mappedTaskItems = mapper.Map<ICollection<TaskItemSimpleDto>>(taskItems);
+        var mappedTaskItems = mapper.Map<ICollection<TaskItemForTasklistDto>>(taskItems);
         return mappedTaskItems;
     }
 }

@@ -10,6 +10,10 @@ public class TaskItemProfile : Profile
     {
         CreateMap<TaskItem, TaskItemSimpleDto>();
         CreateMap<TaskItem, TaskItemDetailedDto>();
+        CreateMap<TaskItem, TaskItemForTasklistDto>()
+            .ForMember(
+                t => t.TaskboardName,
+                opt => opt.MapFrom(t => t.Taskboard!.Name));
         CreateMap<TaskItemHistoryLog, TaskItemHistoryLogDto>();
     }
 }

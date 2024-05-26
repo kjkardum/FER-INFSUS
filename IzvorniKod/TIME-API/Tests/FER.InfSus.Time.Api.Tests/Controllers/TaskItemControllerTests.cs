@@ -16,7 +16,6 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using System.Collections;
-using System.Reflection;
 using Xunit;
 
 namespace FER.InfSus.Time.Api.Tests.Controllers;
@@ -66,7 +65,7 @@ public class TaskItemControllerTests
     {
         // Arrange
         var cancellationToken = default(CancellationToken);
-        var response = AutoFaker.Generate<TaskItemSimpleDto>(5);
+        var response = AutoFaker.Generate<TaskItemForTasklistDto>(5);
 
         _authenticationService.GetUserId().Returns(Guid.NewGuid());
         _mediator.Send(Arg.Any<TaskItemGetAllByAssignedUserQuery>(), cancellationToken).Returns(response);
@@ -82,10 +81,10 @@ public class TaskItemControllerTests
             .GetMethod(nameof(_controller.GetAssignedTaskItems))!
             .ReturnType // Task<ActionResult<Type>>
             .GetGenericArguments()[0] // ActionResult<Type>
-            .GetGenericArguments()[0] // Type (ICollection<TaskItemSimpleDto>)
-            .GetGenericArguments()[0]; // Type (TaskItemSimpleDto)
+            .GetGenericArguments()[0] // Type (ICollection<TaskItemForTasklistDto>)
+            .GetGenericArguments()[0]; // Type (TaskItemForTasklistDto)
         responseResult!.Value.Should().BeEquivalentTo(response);
-        responseResult!.Value.Should().BeOfType<List<TaskItemSimpleDto>>();
+        responseResult!.Value.Should().BeOfType<List<TaskItemForTasklistDto>>();
         (responseResult!.Value as IList)![0].Should().BeOfType(controllerMethodSingleItemReturnType);
     }
 

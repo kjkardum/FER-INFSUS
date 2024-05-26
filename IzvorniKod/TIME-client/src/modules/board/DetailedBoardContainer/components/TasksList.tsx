@@ -7,13 +7,10 @@ import {
   Box,
   Button,
   Chip,
-  IconButton,
-  Paper,
   Stack,
-  styled,
   Typography,
 } from "@mui/material";
-import { Delete, ExpandMore } from "@mui/icons-material";
+import { ExpandMore } from "@mui/icons-material";
 import {
   TaskboardDetailedDto,
   TaskItemSimpleDto,
@@ -21,7 +18,6 @@ import {
 } from "@/api/generated";
 import useAuthentication from "@/hooks/useAuthentication";
 import CreateNewTask from "@/modules/board/DetailedBoardContainer/components/CreateNewTask";
-import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
 import taskItemEndpoint from "@/api/endpoints/TaskItemEndpoint";
@@ -32,6 +28,7 @@ import getColorFromTaskStatus from "@/utils/getColorFromTaskStatus";
 import SnackbarMessages from "@/contexts/snackbar/SnackbarMessages";
 import { AxiosError } from "axios";
 import { ErrorResponseType } from "@/api/generated/@types/ErrorResponseType";
+import TaskComponent from "@/modules/board/DetailedBoardContainer/components/TaskComponent";
 
 const groupTasksByStatus = (tasks: TaskItemSimpleDto[]) => {
   const states = Object.keys(TaskItemState);
@@ -44,13 +41,6 @@ const groupTasksByStatus = (tasks: TaskItemSimpleDto[]) => {
 
   return groups;
 };
-
-const HoverPaper = styled(Paper)(({ theme }) => ({
-  "&:hover": {
-    boxShadow: theme.shadows[3],
-    cursor: "pointer",
-  },
-}));
 
 interface Props {
   board: TaskboardDetailedDto;
@@ -162,55 +152,13 @@ const TasksList = ({ board }: Props) => {
           <AccordionDetails>
             <Stack spacing={2}>
               {groupedTasks[key].map((task) => (
-                <HoverPaper
-                  sx={{
-                    p: "1rem",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                  }}
+                <TaskComponent
                   key={task.id}
-                  elevation={2}
-                  onClick={() => handleTaskClick(task.id)}
-                >
-                  <Box>
-                    <Typography variant="h6">{task.name}</Typography>
-                    <Typography variant="body1">{task.description}</Typography>
-                    {/* TODO: clip description if too long */}
-                    <Typography variant="body2">
-                      {`Kreirano: ${task.createdAt ? dayjs(task.createdAt).format("DD-MM-YYYY HH:mm") : dayjs().format("DD-MM-YYYY HH:mm")}`}
-                    </Typography>
-                  </Box>
-                  <Stack
-                    columnGap={"0.5rem"}
-                    alignItems={"center"}
-                    direction={"row"}
-                  >
-                    <Stack
-                      columnGap={"0.5rem"}
-                      rowGap={"0.25rem"}
-                      alignItems={"center"}
-                      sx={{ flexDirection: { xs: "column", md: "row" } }}
-                    >
-                      {task.assignedUser && (
-                        <Chip
-                          color={"secondary"}
-                          label={`Dodijeljeno: ${task.assignedUser.firstName} ${task.assignedUser.lastName}`}
-                        />
-                      )}
-                      {!task.assignedUser && (
-                        <Chip label={`Nije dodijeljeno`} />
-                      )}
-                    </Stack>
-                    {isAdmin && (
-                      <IconButton
-                        onClick={(e) => handleOpenDeleteTaskModal(e, task.id)}
-                      >
-                        <Delete />
-                      </IconButton>
-                    )}
-                  </Stack>
-                </HoverPaper>
+                  task={task}
+                  handleTaskClick={handleTaskClick}
+                  isAdmin={isAdmin}
+                  handleOpenDeleteTaskModal={handleOpenDeleteTaskModal}
+                />
               ))}
             </Stack>
           </AccordionDetails>

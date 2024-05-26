@@ -1,16 +1,24 @@
 "use client";
-import { Box, Chip, IconButton, Paper, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Chip,
+  debounce,
+  IconButton,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useMemo, useState } from "react";
 import useAuthentication from "@/hooks/useAuthentication";
 import { UserDto } from "@/api/generated";
-import Select from "react-select";
-import useTenantGetUsers from "@/api/hooks/TenantEndpoint/useTenantGetUsers";
 import convertUserDataToSelectOptions from "@/utils/convertUserDataToSelectOptions";
 import { Close } from "@mui/icons-material";
 import taskboardEndpoint from "@/api/endpoints/TaskboardEndpoint";
 import { useQueryClient } from "@tanstack/react-query";
 import { taskboardGetBoardDetailsKey } from "@/api/reactQueryKeys/TaskboardEndpointKeys";
 import DeletePrompt from "@/components/DeletePrompt/DeletePrompt";
+import tenantEndpoint from "@/api/endpoints/TenantEndpoint";
+import AsyncSelect from "react-select/async";
 
 interface Props {
   users: Array<UserDto>;
@@ -22,18 +30,6 @@ const UsersList = ({ users, boardId }: Props) => {
 
   const { isAdmin } = useAuthentication();
   const queryClient = useQueryClient();
-
-  const { data: usersData } = useTenantGetUsers();
-
-  const usersNotInBoard = useMemo(() => {
-    return usersData?.data?.filter(
-      (user) => !users.some((u) => u.id === user.id),
-    );
-  }, [usersData, users]);
-
-  const usersOptions = useMemo(() => {
-    return convertUserDataToSelectOptions(usersNotInBoard ?? []);
-  }, [usersNotInBoard]);
 
   const handleAddUserToBoard = (userId: string) => {
     taskboardEndpoint
@@ -64,6 +60,28 @@ const UsersList = ({ users, boardId }: Props) => {
       });
   };
 
+  const debouncedLoadOptions = useMemo(() => {
+    return debounce(
+      (
+        inputValue: string,
+        callback: (options: { value: string; label: string }[]) => void,
+      ) => {
+        tenantEndpoint
+          .apiTenantManagementGetUsersGet(1, 100, inputValue)
+          .then((response) => {
+            callback(
+              convertUserDataToSelectOptions(
+                response.data.data?.filter(
+                  (user) => !users.some((u) => u.id === user.id),
+                ) ?? [],
+              ),
+            );
+          });
+      },
+      300,
+    );
+  }, [users]);
+
   return (
     <Box width={"100%"}>
       <Stack
@@ -77,8 +95,10 @@ const UsersList = ({ users, boardId }: Props) => {
         </Typography>
       </Stack>
       {isAdmin && (
-        <Select
-          options={usersOptions}
+        <AsyncSelect
+          cacheOptions
+          defaultOptions
+          loadOptions={debouncedLoadOptions}
           value={null}
           onChange={(option) => {
             if (!option) return;

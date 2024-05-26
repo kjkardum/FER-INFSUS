@@ -46,10 +46,7 @@ const BoardsListContainer = () => {
           </IconButton>
         )}
       </Typography>
-      <BoardsListSearch
-        value={searchQuery}
-        onChange={(value) => setSearchQuery(value)}
-      />
+      <BoardsListSearch onChange={(value) => setSearchQuery(value)} />
       <Divider sx={{ my: 2 }} />
       {isLoadingMyBoards && isLoading && <WholeSectionLoading />}
       {(isSuccess || isSuccessMyBoards) &&

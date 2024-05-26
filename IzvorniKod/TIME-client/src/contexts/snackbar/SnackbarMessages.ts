@@ -7,6 +7,7 @@ const SnackbarMessages = {
       deleteError: "Greška prilikom brisanja zaposlenika!",
       updateSuccess: "Zaposlenik uspješno ažuriran.",
       updateError: "Greška prilikom ažuriranja zaposlenika!",
+      invalidEntry: "Neispravan unos!",
     },
   },
   login: {

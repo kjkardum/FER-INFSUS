@@ -244,6 +244,69 @@ export interface TaskItemDetailedDto {
 /**
  * 
  * @export
+ * @interface TaskItemForTasklistDto
+ */
+export interface TaskItemForTasklistDto {
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemForTasklistDto
+     */
+    'id'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemForTasklistDto
+     */
+    'name': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemForTasklistDto
+     */
+    'description': string | null;
+    /**
+     * 
+     * @type {TaskItemState}
+     * @memberof TaskItemForTasklistDto
+     */
+    'state'?: TaskItemState;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemForTasklistDto
+     */
+    'taskboardId'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemForTasklistDto
+     */
+    'taskboardName': string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemForTasklistDto
+     */
+    'assignedUserId'?: string | null;
+    /**
+     * 
+     * @type {UserDto}
+     * @memberof TaskItemForTasklistDto
+     */
+    'assignedUser'?: UserDto;
+    /**
+     * 
+     * @type {string}
+     * @memberof TaskItemForTasklistDto
+     */
+    'createdAt'?: string;
+}
+
+
+/**
+ * 
+ * @export
  * @interface TaskItemHistoryLogDto
  */
 export interface TaskItemHistoryLogDto {
@@ -340,7 +403,7 @@ export const TaskItemState = {
     Novo: 'Novo',
     Spreman: 'Spreman',
     Aktivan: 'Aktivan',
-    Dovrsen: 'Dovrsen',
+    Dovren: 'Dovršen',
     Prekinut: 'Prekinut'
 } as const;
 
@@ -705,7 +768,15 @@ export interface UserUpdateCommand {
      * @memberof UserUpdateCommand
      */
     'newPassword'?: string | null;
+    /**
+     * 
+     * @type {UserType}
+     * @memberof UserUpdateCommand
+     */
+    'userType'?: UserType;
 }
+
+
 
 /**
  * AuthenticationApi - axios parameter creator
@@ -981,6 +1052,38 @@ export class StatusApi extends BaseAPI {
  */
 export const TaskItemApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemAssignedGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/TaskItem/assigned`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication Bearer required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
         /**
          * 
          * @param {string} id 
@@ -1301,6 +1404,17 @@ export const TaskItemApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiTaskItemAssignedGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<TaskItemForTasklistDto>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemAssignedGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemAssignedGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
          * @param {string} id 
          * @param {TaskItemAssignCommand} [taskItemAssignCommand] 
          * @param {*} [options] Override http request option.
@@ -1394,7 +1508,7 @@ export const TaskItemApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiTaskItemPost(taskItemCreateCommand?: TaskItemCreateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskItemDetailedDto>> {
+        async apiTaskItemPost(taskItemCreateCommand?: TaskItemCreateCommand, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TaskItemSimpleDto>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.apiTaskItemPost(taskItemCreateCommand, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['TaskItemApi.apiTaskItemPost']?.[localVarOperationServerIndex]?.url;
@@ -1410,6 +1524,14 @@ export const TaskItemApiFp = function(configuration?: Configuration) {
 export const TaskItemApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
     const localVarFp = TaskItemApiFp(configuration)
     return {
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiTaskItemAssignedGet(options?: any): AxiosPromise<Array<TaskItemForTasklistDto>> {
+            return localVarFp.apiTaskItemAssignedGet(options).then((request) => request(axios, basePath));
+        },
         /**
          * 
          * @param {string} id 
@@ -1484,7 +1606,7 @@ export const TaskItemApiFactory = function (configuration?: Configuration, baseP
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiTaskItemPost(taskItemCreateCommand?: TaskItemCreateCommand, options?: any): AxiosPromise<TaskItemDetailedDto> {
+        apiTaskItemPost(taskItemCreateCommand?: TaskItemCreateCommand, options?: any): AxiosPromise<TaskItemSimpleDto> {
             return localVarFp.apiTaskItemPost(taskItemCreateCommand, options).then((request) => request(axios, basePath));
         },
     };
@@ -1497,6 +1619,16 @@ export const TaskItemApiFactory = function (configuration?: Configuration, baseP
  * @extends {BaseAPI}
  */
 export class TaskItemApi extends BaseAPI {
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TaskItemApi
+     */
+    public apiTaskItemAssignedGet(options?: RawAxiosRequestConfig) {
+        return TaskItemApiFp(this.configuration).apiTaskItemAssignedGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
     /**
      * 
      * @param {string} id 

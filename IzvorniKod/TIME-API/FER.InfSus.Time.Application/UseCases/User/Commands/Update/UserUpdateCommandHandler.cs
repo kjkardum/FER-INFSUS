@@ -40,6 +40,7 @@ public class UserUpdateCommandHandler(
         user.FirstName = request.FirstName;
         user.LastName = request.LastName;
         user.DateOfBirth = request.DateOfBirth;
+        user.UserType = request.UserType;
 
         await userRepository.Update(user);
     }

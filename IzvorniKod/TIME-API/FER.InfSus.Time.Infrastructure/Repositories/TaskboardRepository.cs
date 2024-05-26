@@ -48,8 +48,19 @@ public class TaskboardRepository(ApplicationDbContext dbContext) : ITaskboardRep
         if (userTaskboardAssociation is not null)
         {
             dbContext.Remove(userTaskboardAssociation);
-            await dbContext.SaveChangesAsync();
         }
+
+        var userTasksOnBoard = await dbContext.TaskItems
+            .Where(t => t.TaskboardId == boardId && t.AssignedUserId == userId)
+            .ToListAsync();
+
+        foreach (var task in userTasksOnBoard)
+        {
+            task.AssignedUserId = null;
+            dbContext.Update(task);
+        }
+
+        await dbContext.SaveChangesAsync();
     }
 
     public async Task<ICollection<Taskboard>> GetBoardsByUserId(Guid userId) =>

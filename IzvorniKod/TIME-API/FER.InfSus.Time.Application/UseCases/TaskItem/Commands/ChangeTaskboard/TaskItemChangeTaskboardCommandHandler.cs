@@ -23,25 +23,31 @@ public class TaskItemChangeTaskboardCommandHandler(
         {
             return;
         }
-        var taskboard = await taskboardRepository.GetBoardById(request.NewTaskboardId);
-        if (taskboard == null)
+        var newTaskboard = await taskboardRepository.GetBoardById(request.NewTaskboardId);
+        if (newTaskboard == null)
         {
             throw new EntityNotFoundException("Nova radna ploča nije pronađena");
         }
-        if (taskboard.TenantId != requestor?.TenantId || taskItem.Taskboard!.TenantId != requestor.TenantId)
+        if (newTaskboard.TenantId != requestor?.TenantId || taskItem.Taskboard!.TenantId != requestor.TenantId)
 
         {
             throw new ForbiddenAccessException(
                 "Nemate dozvolu za promjenu radne ploče zadatka na one koje nisu u vašoj organizaciji");
         }
         if (requestor.UserType != UserType.ADMIN
-            && taskboard.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
+            && taskItem.Taskboard!.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
+        {
+            throw new ForbiddenAccessException(
+                "Nemate dozvolu za promjenu radne ploče zadatka sa one na kojoj niste član");
+        }
+        if (requestor.UserType != UserType.ADMIN
+            && newTaskboard.TaskboardUsers!.All(tu => tu.UserId != request.RequestorId))
         {
             throw new ForbiddenAccessException(
                 "Nemate dozvolu za promjenu radne ploče zadatka na one na kojima niste član");
         }
         if (taskItem.AssignedUserId != null
-            && taskboard.TaskboardUsers!.All(tu => tu.UserId != taskItem.AssignedUserId))
+            && newTaskboard.TaskboardUsers!.All(tu => tu.UserId != taskItem.AssignedUserId))
         {
             throw new ForbiddenAccessException(
                 "Ne možete promijeniti radnu ploču zadataka koji su dodijeljeni korisnicima koji nisu članovi nove radne ploče");
@@ -54,7 +60,7 @@ public class TaskItemChangeTaskboardCommandHandler(
             Changelog = $"""
                          {requestor!.FirstName} {requestor!.LastName} promijenio radnu ploču zadatka
                          Stara radna ploča: {taskItem.Taskboard!.Name}
-                         Nova radna ploča: {taskboard.Name}
+                         Nova radna ploča: {newTaskboard.Name}
                          """,
             ModifiedAt = now,
         };

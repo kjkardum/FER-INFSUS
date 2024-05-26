@@ -1,3 +1,4 @@
+using FER.InfSus.Time.Domain.Enums;
 using MediatR;
 using System.Text.Json.Serialization;
 
@@ -11,4 +12,5 @@ public class UserUpdateCommand: IRequest
     public string LastName { get; set; } = null!;
     public DateTime DateOfBirth { get; set; }
     public string? NewPassword { get; set; }
+    public UserType UserType { get; set; }
 }

@@ -13,7 +13,7 @@ using Xunit;
 
 namespace FER.InfSus.Time.Api.Tests.Controllers;
 
-public class AuthenticationControllerTests: WebHostTestBase
+public class AuthenticationControllerTests
 {
     private readonly AuthenticationController _controller;
     private readonly IMediator _mediator;

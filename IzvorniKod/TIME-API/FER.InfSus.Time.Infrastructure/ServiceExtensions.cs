@@ -6,6 +6,7 @@ using FER.InfSus.Time.Application.Services;
 using FER.InfSus.Time.Infrastructure.Identity;
 using FER.InfSus.Time.Infrastructure.Persistence;
 using FER.InfSus.Time.Infrastructure.Repositories;
+using Microsoft.Data.Sqlite;
 
 namespace FER.InfSus.Time.Infrastructure;
 
@@ -16,8 +17,17 @@ public static class ServiceExtensions
         IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
-        );
+        {
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            if (connectionString != "TestConnectionString")
+            {
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            }
+            else
+            {
+                options.UseSqlite(new SqliteConnection("DataSource=file::memory:?cache=shared"));
+            }
+        });
 
         services.AddTransient<ISignInService, SignInService>();
         services.AddTransient<IUserRepository, UserRepository>();

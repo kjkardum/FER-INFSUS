@@ -19,7 +19,7 @@ using Xunit;
 
 namespace FER.InfSus.Time.Api.Tests.Controllers;
 
-public class TaskboardControllerTests : WebHostTestBase
+public class TaskboardControllerTests
 {
     private readonly TaskboardController _controller;
     private readonly IMediator _mediator;

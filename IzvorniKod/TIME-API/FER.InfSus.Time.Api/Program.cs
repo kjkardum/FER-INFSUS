@@ -18,7 +18,7 @@ ConfigureServices(services, builder.Configuration, builder.Environment);
 var app = builder.Build();
 
 // Seed the database
-await FillDatabase(app.Services);
+await FillDatabase(app.Services, builder.Configuration);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -72,13 +72,20 @@ public partial class Program
         services.AddScoped<IAuthenticationService, AuthenticationService>();
     }
 
-    public static async Task FillDatabase(IServiceProvider serviceProvider)
+    public static async Task FillDatabase(IServiceProvider serviceProvider, IConfiguration configuration)
     {
         using var scope = serviceProvider.CreateScope();
         var services = scope.ServiceProvider;
 
         var context = services.GetRequiredService<ApplicationDbContext>();
-        await context.Database.MigrateAsync();
+        if (configuration.GetConnectionString("DefaultConnection") == "TestConnectionString")
+        {
+            await context.Database.EnsureCreatedAsync();
+        }
+        else
+        {
+            await context.Database.MigrateAsync();
+        }
 
         await TenantAndUserSeed.Seed(context);
     }

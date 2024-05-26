@@ -23,7 +23,7 @@ public static class TenantAndUserSeed
                         Id = Guid.Empty,
                         FirstName = "John",
                         LastName = "Doe",
-                        Email = "user@time.com",
+                        Email = "USER@TIME.COM",
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword("Pa$$w0rd"),
                         UserType = UserType.ADMIN,
                     }

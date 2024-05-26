@@ -15,7 +15,7 @@ using Xunit;
 
 namespace FER.InfSus.Time.Api.Tests.Controllers;
 
-public class TenantManagementControllerTests : WebHostTestBase
+public class TenantManagementControllerTests
 {
     private readonly TenantManagementController _controller;
     private readonly IMediator _mediator;

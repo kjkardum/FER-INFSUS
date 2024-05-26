@@ -1,6 +1,4 @@
-using FER.InfSus.Time.Domain.Entities;
-
-namespace FER.InfSus.Time.Domain;
+namespace FER.InfSus.Time.Domain.Entities;
 
 public class UserTaskboardAssociation
 {

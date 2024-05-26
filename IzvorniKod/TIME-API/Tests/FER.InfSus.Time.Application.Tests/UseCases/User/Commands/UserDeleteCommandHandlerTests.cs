@@ -4,6 +4,7 @@ using Bogus;
 using FER.InfSus.Time.Application.Repositories;
 using FER.InfSus.Time.Application.UseCases.User.Commands.Delete;
 using FER.InfSus.Time.Domain.Enums;
+using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
@@ -66,7 +67,7 @@ namespace FER.InfSus.Time.Application.Tests.UseCases.User.Commands
             var act = async () => await _userDeleteCommandHandler.Handle(request, cancellationToken);
 
             // Assert
-            await Assert.ThrowsAsync<ForbiddenAccessException>(act);
+            await act.Should().ThrowAsync<ForbiddenAccessException>();
             await _userRepository.Received(1).GetByUserId(request.RequestorId);
             await _userRepository.DidNotReceive().GetByUserId(request.Id);
             await _userRepository.DidNotReceive().Delete(Arg.Any<Domain.Entities.User>());
@@ -90,7 +91,7 @@ namespace FER.InfSus.Time.Application.Tests.UseCases.User.Commands
             var act = async () => await _userDeleteCommandHandler.Handle(request, cancellationToken);
 
             // Assert
-            await Assert.ThrowsAsync<EntityNotFoundException>(act);
+            await act.Should().ThrowAsync<EntityNotFoundException>();
             await _userRepository.Received(1).GetByUserId(request.RequestorId);
             await _userRepository.Received(1).GetByUserId(request.Id);
             await _userRepository.DidNotReceive().Delete(Arg.Any<Domain.Entities.User>());
@@ -119,7 +120,7 @@ namespace FER.InfSus.Time.Application.Tests.UseCases.User.Commands
             var act = async () => await _userDeleteCommandHandler.Handle(request, cancellationToken);
 
             // Assert
-            await Assert.ThrowsAsync<ForbiddenAccessException>(act);
+            await act.Should().ThrowAsync<ForbiddenAccessException>();
             await _userRepository.Received(1).GetByUserId(request.RequestorId);
             await _userRepository.Received(1).GetByUserId(request.Id);
             await _userRepository.DidNotReceive().Delete(Arg.Any<Domain.Entities.User>());

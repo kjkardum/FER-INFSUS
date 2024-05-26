@@ -87,7 +87,7 @@ public class UserGetPaginatedQueryHandlerTests
         var act = async () => await _userGetPaginatedQueryHandler.Handle(request, cancellationToken);
 
         // Assert
-        await Assert.ThrowsAsync<ForbiddenAccessException>(act);
+        await act.Should().ThrowAsync<ForbiddenAccessException>();
         await _userRepository.Received(1).GetByUserId(request.RequestorId);
         await _userRepository.DidNotReceive()
             .GetPaginated(Arg.Any<Guid>(), Arg.Any<int>(), Arg.Any<int>(), Arg.Any<string>(), Arg.Any<string>());

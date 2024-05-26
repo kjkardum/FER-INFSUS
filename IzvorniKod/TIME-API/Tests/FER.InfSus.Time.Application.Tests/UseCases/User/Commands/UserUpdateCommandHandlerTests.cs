@@ -5,6 +5,7 @@ using FER.InfSus.Time.Application.Repositories;
 using FER.InfSus.Time.Application.Services;
 using FER.InfSus.Time.Application.UseCases.User.Commands.Update;
 using FER.InfSus.Time.Domain.Enums;
+using FluentAssertions;
 using NSubstitute;
 using Xunit;
 
@@ -80,7 +81,7 @@ public class UserUpdateCommandHandlerTests
         var act = async () => await _userUpdateCommandHandler.Handle(request, cancellationToken);
 
         // Assert
-        await Assert.ThrowsAsync<ForbiddenAccessException>(act);
+        await act.Should().ThrowAsync<ForbiddenAccessException>();
         await _userRepository.Received(1).GetByUserId(request.RequestorId);
         await _userRepository.DidNotReceive().GetByUserId(request.Id);
         _signInService.DidNotReceive().HashPassword(request.NewPassword);
@@ -105,7 +106,7 @@ public class UserUpdateCommandHandlerTests
         var act = async () => await _userUpdateCommandHandler.Handle(request, cancellationToken);
 
         // Assert
-        await Assert.ThrowsAsync<EntityNotFoundException>(act);
+        await act.Should().ThrowAsync<EntityNotFoundException>();
         await _userRepository.Received(1).GetByUserId(request.RequestorId);
         await _userRepository.Received(1).GetByUserId(request.Id);
         _signInService.DidNotReceive().HashPassword(request.NewPassword);
@@ -135,7 +136,7 @@ public class UserUpdateCommandHandlerTests
         var act = async () => await _userUpdateCommandHandler.Handle(request, cancellationToken);
 
         // Assert
-        await Assert.ThrowsAsync<ForbiddenAccessException>(act);
+        await act.Should().ThrowAsync<ForbiddenAccessException>();
         await _userRepository.Received(1).GetByUserId(request.RequestorId);
         await _userRepository.Received(1).GetByUserId(request.Id);
         _signInService.DidNotReceive().HashPassword(request.NewPassword);
@@ -167,7 +168,7 @@ public class UserUpdateCommandHandlerTests
         var act = async () => await _userUpdateCommandHandler.Handle(request, cancellationToken);
 
         // Assert
-        await Assert.ThrowsAsync<BadRequestException>(act);
+        await act.Should().ThrowAsync<BadRequestException>();
         await _userRepository.Received(1).GetByUserId(request.RequestorId);
         await _userRepository.Received(1).GetByUserId(request.Id);
         _signInService.Received(1).HashPassword(request.NewPassword);

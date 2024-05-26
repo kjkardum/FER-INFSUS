@@ -82,7 +82,7 @@ public class UserLoginCommandHandlerTests
         var act = async () => await _userLoginCommandHandler.Handle(request, cancellationToken);
 
         // Assert
-        await Assert.ThrowsAsync<UnAuthorizedAccessException>(act);
+        await act.Should().ThrowAsync<UnAuthorizedAccessException>();
         await _userRepository.Received(1).GetByEmail(request.NormalizedEmail);
         _signInService.DidNotReceive().CheckPasswordHash(Arg.Any<string>(), Arg.Any<string>());
         await _userRepository.DidNotReceive().UpdateLastLogin(Arg.Any<Domain.Entities.User>());
@@ -110,7 +110,7 @@ public class UserLoginCommandHandlerTests
         var act = async () => await _userLoginCommandHandler.Handle(request, cancellationToken);
 
         // Assert
-        await Assert.ThrowsAsync<UnAuthorizedAccessException>(act);
+        await act.Should().ThrowAsync<UnAuthorizedAccessException>();
         await _userRepository.Received(1).GetByEmail(request.NormalizedEmail);
         _signInService.Received(1).CheckPasswordHash(user.PasswordHash, request.Password);
         await _userRepository.DidNotReceive().UpdateLastLogin(Arg.Any<Domain.Entities.User>());

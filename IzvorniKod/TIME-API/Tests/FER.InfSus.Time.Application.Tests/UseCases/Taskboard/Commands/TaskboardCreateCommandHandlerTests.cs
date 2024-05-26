@@ -75,7 +75,7 @@ public class TaskboardCreateCommandHandlerTests
         var act = async () => await _taskboardCreateCommandHandler.Handle(request, cancellationToken);
 
         // Assert
-        await Assert.ThrowsAsync<ForbiddenAccessException>(act);
+        await act.Should().ThrowAsync<ForbiddenAccessException>();
         await _userRepository.Received(1).GetByUserId(request.RequestorId);
         await _taskboardRepository.DidNotReceive().CreateBoard(Arg.Any<Domain.Entities.Taskboard>());
     }
